@@ -31,7 +31,7 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SECRET` as is fow now - we'll come back to it.
+Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SECRET` as is for now - we'll come back to it.
 
 ## Hello, World
 Let's run the React web app and Node server so we can see the Utility Connect Component in action.
