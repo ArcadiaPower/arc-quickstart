@@ -31,7 +31,7 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia API Client ID, API Client Secret, and Webhook Secret.
+Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SECRET` as is fow now - we'll come back to it.
 
 ## Hello, World
 Let's run the React web app and Node server so we can see the Utility Connect Component in action.
@@ -141,7 +141,7 @@ x-runtime: 0.025782
 x-amzn-trace-id: Root=1-60aeee63-225b188311ad903f1c41b343
 vary: Origin
 
-{"id":"YOUR_WEBHOOK_ID","url":"ARCADIA_TUNNELING_URL/webhook_listener","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
+{"id":"YOUR_WEBHOOK_ID","url":"ARCADIA_TUNNELING_URL/webhook_listener","signing_key":"ARCADIA_WEBHOOK_SECRET","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
 ```
 
 Now let's save the webhook ID to an environment variable for ease of access in subsequent commands:
@@ -149,6 +149,8 @@ Now let's save the webhook ID to an environment variable for ease of access in s
 ```.sh
 ARCADIA_WEBHOOK_ID=<id from last response>
 ```
+
+We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. Note that if your server is still running, it will need to be stopped and started again to pick up this change.
 
 Your registered webhook endpoint is only valid as long as your ngrok session is active. Note that if you terminate your `ngrok` session, or if your session expires after the default limit of 2 hours, you will need to re-run the `ngrok` command and register a new webhook.
 
