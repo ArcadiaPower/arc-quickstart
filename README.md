@@ -31,7 +31,7 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SECRET` as is for now - we'll come back to it.
+Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
 
 ## Hello, World
 Let's run the React web app and Node server so we can see the Utility Connect Component in action.
@@ -141,7 +141,7 @@ x-runtime: 0.025782
 x-amzn-trace-id: Root=1-60aeee63-225b188311ad903f1c41b343
 vary: Origin
 
-{"id":"YOUR_WEBHOOK_ID","url":"ARCADIA_TUNNELING_URL/webhook_listener","signing_key":"ARCADIA_WEBHOOK_SECRET","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
+{"id":"YOUR_WEBHOOK_ID","url":"ARCADIA_TUNNELING_URL/webhook_listener","signing_key":"ARCADIA_WEBHOOK_SIGNING_KEY","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
 ```
 
 Now let's save the webhook ID to an environment variable for ease of access in subsequent commands:
