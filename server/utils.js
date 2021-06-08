@@ -15,7 +15,7 @@ export const validateWebhookSignature = req => {
   const payloadToSign = `${webhookTimestamp}.${req.body}`;
 
   // 3. Calculate the Signature using your Arcadia Webhook Secret
-  const hmac = createHmac('sha256', env['ARCADIA_WEBHOOK_SECRET']);
+  const hmac = createHmac('sha256', env['ARCADIA_WEBHOOK_SIGNING_KEY']);
   const calculatedSignature = hmac.update(payloadToSign).digest('hex');
 
   // 4. If the timestamp is older than the threshold, this may be a replay attack
