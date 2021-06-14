@@ -1,15 +1,15 @@
 This project demonstrates how to use Arcadia's [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) component in an example integration against the [Arcadia Developer Platform API](http://developers.arcadia.com).
 
-# Arcadia's Utility Connect Node Quickstart
+# Arcadia's Platform Quickstart
 
-This example application will load the Utility Connect Component into a web app where you can enter utility credentials. The data related to the utility account will be delivered to your terminal via webhooks.
+This example application will load a React web app where you can enter utility credentials. The data related to the utility account will be delivered to your terminal via webhooks.
 
 You'll need your Arcadia API keys, a computer that can run Node.js version 14.x, and familiarity with the command line.
 
 
 ## Configuration
 
-The first step is to clone the Node example application. Use `git` to download the repository:
+The first step is to clone this example application. Use `git` to download the repository:
 ```.sh
 git clone https://github.com/ArcadiaPower/platform-quickstart.git
 ```
@@ -31,25 +31,25 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia API Client ID, API Client Secret. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
+Open it and fill in your Arcadia `ARCADIA_OAUTH_CLIENT_ID` and `ARCADIA_OAUTH_CLIENT_SECRET`. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
 
 ## Hello, World
-Let's run the React web app and Node server so we can see the Utility Connect Component in action.
+Let's run the React web app and Node server so we can see this demo application in action.
 ```.sh
 npm start
 ```
 
 This command will concurrently start:
 
-1. An example backend [server](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js), which calls the Arcadia API to create OAuth Tokens for the Utility Connect Component. The server's webhook endpoint will also print incoming webhook events to the console.
-2. A React client application demonstrating use of the Utility Connect Component.
+1. A React web app demonstrating use of Arcadia's front-end integration component, called Utility Connect.
+2. An example backend [server](./server/index.js), which calls the Arcadia API to create OAuth Tokens for Utility Connect. The server's webhook endpoint will also print incoming webhook events to the console.
 
 If you open the React app in your browser by navigating to [http://localhost:8080](http://localhost:8080), you can go through the Utility Connect flow and enter utility credentials.
 
 But how do we start getting utility data from the Arcadia API after a user submits their utility credentials? We'll need to set up webhooks for exactly this purpose.
 
 ## Webhooks
-Let's set up webhooks so that after the Utility Connect Component has credentials submitted, we can start receiving account-related data. Webhooks allow us to receive data when it's available, rather than constantly polling the server.
+Let's set up webhooks so that after credentials are submitted via Utility Connect, we can start receiving account-related data. Webhooks allow us to receive data when it's available, rather than constantly polling the server.
 
 ### ngrok
 
@@ -202,11 +202,11 @@ Go through the Utility Connect flow. When you submit utility credentials this ti
 
 You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired within a couple minutes that includes all the user's utility account data and statement data.
 
-That concludes the basic Utility Connect quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) project for instructions on how to embed the Utility Connect Component in your own application.
+That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) project for instructions on how to embed Utility Connect in your own application.
 
 
-There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate the Utility Connect Component and webhooks into your project:
+There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Utility Connect and webhooks into your project:
 
-1. The [implementation of the Utility Connect Component](https://github.com/ArcadiaPower/platform-quickstart/blob/main/src/utility-connect-widget.jsx): this requests an OAuth token from the server, configures the Utility Connect Component, and manages frontend state throughout the component lifecycle.
+1. The [implementation of Utility Connect](./src/utility-connect-widget.jsx): this requests an OAuth token from the server, configures Utility Connect, and manages frontend state throughout the component lifecycle.
 
-2. The [backend server](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js): this server fetches OAuth tokens on behalf of the Utility Connect Component and logs payload JSON to the console as webhooks are received.
+2. The [backend server](./server/index.js): this server fetches OAuth tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
