@@ -42,7 +42,7 @@ npm start
 This command will concurrently start:
 
 1. A React web app demonstrating use of Arcadia's front-end integration component, called Utility Connect.
-2. An example backend [server](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js), which calls the Arcadia API to create OAuth Tokens for Utility Connect. The server's webhook endpoint will also print incoming webhook events to the console.
+2. An example backend [server](./server/index.js), which calls the Arcadia API to create OAuth Tokens for Utility Connect. The server's webhook endpoint will also print incoming webhook events to the console.
 
 If you open the React app in your browser by navigating to [http://localhost:8080](http://localhost:8080), you can go through the Utility Connect flow and enter utility credentials.
 
