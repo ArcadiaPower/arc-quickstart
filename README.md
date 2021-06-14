@@ -209,4 +209,4 @@ There are two primary source code files that do most of the heavy lifting in thi
 
 1. The [implementation of Utility Connect](./src/utility-connect-widget.jsx): this requests an OAuth token from the server, configures Utility Connect, and manages frontend state throughout the component lifecycle.
 
-2. The [backend server](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js): this server fetches OAuth tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
+2. The [backend server](./server/index.js): this server fetches OAuth tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
