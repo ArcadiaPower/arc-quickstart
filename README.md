@@ -31,7 +31,7 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia `ARCADIA_OAUTH_CLIENT_ID` and `ARCADIA_OAUTH_CLIENT_SECRET`. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
+Open it and fill in your Arcadia `ARCADIA_API_CLIENT_ID` and `ARCADIA_API_CLIENT_SECRET`. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
 
 ## Hello, World
 Let's run the React web app and Node server so we can see this demo application in action.
@@ -42,7 +42,7 @@ npm start
 This command will concurrently start:
 
 1. A React web app demonstrating use of Arcadia's front-end integration component, called Utility Connect.
-2. An example backend [server](./server/index.js), which calls the Arcadia API to create OAuth Tokens for Utility Connect. The server's webhook endpoint will also print incoming webhook events to the console.
+2. An example backend [server](./server/index.js) that calls the Arcadia API to create Utility Connect Tokens, which are used to instantiate Utility Connect and scope it to the correct user. The server's webhook endpoint will also print incoming webhook events to the console.
 
 If you open the React app in your browser by navigating to [http://localhost:8080](http://localhost:8080), you can go through the Utility Connect flow and enter utility credentials.
 
@@ -75,21 +75,19 @@ ngrok http 3000
 ARCADIA_TUNNELING_URL=<https URL from ngrok>
 ```
 
-### Webhook OAuth Token
+### Webhook Access Token
 
-Now that we have public traffic routed to the port that our server will run on, the next step is to request an OAuth token that you can use to register your webhook URIs. The [webhook section](https://developers.arcadia.com/#tag/Webhooks) describes the RESTful Arcadia API endpoints for managing your webhook URIs. For the purposes of this walkthrough, we'll use `curl` to make HTTP requests to those API endpoints.
+Now that we have public traffic routed to the port that our server will run on, the next step is to request an Access Token that you can use to register your webhook URIs. The [webhook section](https://developers.arcadia.com/#tag/Webhooks) describes the RESTful Arcadia API endpoints for managing your webhook URIs. For the purposes of this walkthrough, we'll use `curl` to make HTTP requests to those API endpoints.
 
-To request an OAuth token, we'll load the API Keys into our shell environment and then send a request to the webhooks endpoint:
+To request an Access Token, we'll load the API Keys into our shell environment and then send a request to the webhooks endpoint:
 
 ```.sh
 source .env
 ```
 ```.sh
-curl -i -X POST https://sandbox.api.arcadia.com/oauth/token \
-  -F "grant_type=client_credentials" \
-  -F "scope=write" \
-  -F "client_id=$ARCADIA_OAUTH_CLIENT_ID" \
-  -F "client_secret=$ARCADIA_OAUTH_CLIENT_SECRET"
+curl -i -X POST https://sandbox.api.arcadia.com/auth/access_token \
+  -F "client_id=$ARCADIA_API_CLIENT_ID" \
+  -F "client_secret=$ARCADIA_API_CLIENT_SECRET"
 ```
 
 Your response should look something like this:
@@ -107,23 +105,23 @@ x-runtime: 0.360905
 x-amzn-trace-id: Root=1-60aec757-21d4794f6c91c82269602213
 vary: Origin
 
-{"access_token":"YOUR_ARCADIA_OAUTH_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1622067032}%
+{"access_token":"YOUR_ARCADIA_ACCESS_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1622067032}%
 ```
 
-Save your OAuth token to an environment variable so you don't have to keep copying and pasting across `curl` commands:
+Save your Access Token to an environment variable so you don't have to keep copying and pasting across `curl` commands:
 
 ```.sh
-ARCADIA_OAUTH_TOKEN=<access_token from last response>
+ARCADIA_ACCESS_TOKEN=<access_token from last response>
 ```
 
 ### Webhook Registration
-Now we have the OAuth token to register a webhook and the `ngrok` base URL that the webhooks will be sent to.
+Now we have the Access Token to register a webhook and the `ngrok` base URL that the webhooks will be sent to.
 
 The backend we started up is designed to print out data received at the [`/webhook_listener` path](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js#L62). For the local server to receive the webhook, we need to register the URL with the Arcadia API:
 
 ```.sh
 curl -i -X POST https://sandbox.api.arcadia.com/webhook/endpoints \
-  -H "Authorization: Bearer $ARCADIA_OAUTH_TOKEN" \
+  -H "Authorization: Bearer $ARCADIA_ACCESS_TOKEN" \
   -d "url=$ARCADIA_TUNNELING_URL/webhook_listener"
 ```
 
@@ -150,7 +148,7 @@ Now let's save the webhook ID to an environment variable for ease of access in s
 ARCADIA_WEBHOOK_ID=<id from last response>
 ```
 
-We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. Note that if your server is still running, it will need to be stopped and started again to pick up this change.
+We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. *Note that if your server is still running, it will need to be stopped and started again to pick up this change.*
 
 Your registered webhook endpoint is only valid as long as your ngrok session is active. Note that if you terminate your `ngrok` session, or if your session expires after the default limit of 2 hours, you will need to re-run the `ngrok` command and register a new webhook.
 
@@ -166,7 +164,7 @@ npm start
 Use the [webhook test endpoint](https://developers.arcadia.com/#operation/testWebhook) to trigger a test webhook from Arcadia:
 ```.sh
 curl -i -X PUT https://sandbox.api.arcadia.com/webhook/endpoints/$ARCADIA_WEBHOOK_ID/test \
-    -H "Authorization: Bearer $ARCADIA_OAUTH_TOKEN"
+    -H "Authorization: Bearer $ARCADIA_ACCESS_TOKEN"
 ```
 
 Your response should look something like this:
@@ -207,6 +205,6 @@ That concludes the basic platform quickstart! Explore our [Developer Platform AP
 
 There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Utility Connect and webhooks into your project:
 
-1. The [implementation of Utility Connect](./src/utility-connect-widget.jsx): this requests an OAuth token from the server, configures Utility Connect, and manages frontend state throughout the component lifecycle.
+1. The [implementation of Utility Connect](./src/utility-connect-widget.jsx): this requests a Utility Connect Token from the server, configures Utility Connect, and manages frontend state throughout the component lifecycle.
 
-2. The [backend server](./server/index.js): this server fetches OAuth tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
+2. The [backend server](./server/index.js): this server fetches Utility Connect Tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
