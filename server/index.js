@@ -47,5 +47,5 @@ app.post('/webhook_listener', (req, res) => {
 
 // Starts the server
 app.listen(port, () => {
-  console.log(`Running on port ${port}`);
+  console.log(`Backend server running on port ${port}`);
 });
