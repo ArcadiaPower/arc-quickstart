@@ -148,7 +148,7 @@ Now let's save the webhook ID to an environment variable for ease of access in s
 ARCADIA_WEBHOOK_ID=<id from last response>
 ```
 
-We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. *Note that if your server is still running, it will need to be stopped and started again to pick up this change.*
+We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. **Note that if your server is still running, it will need to be stopped and started again to pick up this change.**
 
 Your registered webhook endpoint is only valid as long as your ngrok session is active. Note that if you terminate your `ngrok` session, or if your session expires after the default limit of 2 hours, you will need to re-run the `ngrok` command and register a new webhook.
 
