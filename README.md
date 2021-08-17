@@ -196,9 +196,12 @@ Great, we're all set up to start receiving data!
 
 Open up your browser to the React app at [http://localhost:8080](http://localhost:8080). Refresh the page if you already went through the Utility Connect flow in order to reset the example app.
 
-Go through the Utility Connect flow. When you submit utility credentials this time, return to your console and watch the stream of webhook events roll in.
+Go through the Utility Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 
-You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired within a couple minutes that includes all the user's utility account data and statement data.
+You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after that includes all the user's utility account data. Finally, after a minute or two, you'll receive a `historical_utility_statements_discovered` webhook that contains all of the existing statements we were able to collect for each account.
+
+
+## Digging Deeper
 
 That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) project for instructions on how to embed Utility Connect in your own application.
 
