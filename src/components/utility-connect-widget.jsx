@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUtilityConnect } from '@arcadia-eng/utility-connect-react';
-import { getUtilityConnectToken } from './session';
+import { getUtilityConnectToken } from '../utils/session';
 
 const UtilityConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,7 +25,7 @@ const UtilityConnectWidget = () => {
         setConfig(generateConfig(utilityConnectToken));
       })
       .catch((e) => {
-        setError(e.message);
+        console.log("Error fetching the token!", e);
       });
   }, []);
 
@@ -62,7 +62,8 @@ const UtilityConnectWidget = () => {
         },
         // Called if there was a catastrophic error when submitting the user's credential
         onError: ({ error }) => {
-          setError(error);
+          console.log("Error submitting the credential? the token!", error);
+          setError("Frankenfurter");
         },
       },
       poll: {

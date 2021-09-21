@@ -20,6 +20,29 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// This endpoint will be used by the FE to request a particular carbon offset project
+app.get('/carbon_offset_projects', async(req, res) => {
+  // The project type should be provided as a param 
+  let projectType = JSON.parse(req.query.projectType);
+
+  // TODO: Return details on the carbon offset project that is the best fit for the requested project type
+  let projectResponse = {};
+
+  res.send(projectResponse);
+});
+
+// This endpoint will be used by the FE to request details on the carbon intensity of a particular utility
+app.get('/grid_mix', async(req, res) => {
+  // The utility type should be provided as a param 
+  let utilityName = JSON.parse(req.query.utilityName);
+
+  // TODO: Return details on the grid mix, including $ / kWh and the generating sources
+  let gridMix = {};
+
+  res.send(gridMix);
+
+});
+
 // This is the endpoint used by the Utility Connect Component (in utility-connect-widget.jsx) to request a Utility Connect Token
 app.post('/utility_connect_token', async (req, res) => {
   try {
@@ -40,6 +63,7 @@ app.post('/utility_connect_token', async (req, res) => {
 app.post('/webhook_listener', (req, res) => {
   validateWebhookSignature(req);
 
+  // TODO: Specifically filter for statements for the user that just submitted creds
   console.log('Received a webhook with data:');
   console.dir(JSON.parse(req.body), { depth: null });
   res.sendStatus(200);
