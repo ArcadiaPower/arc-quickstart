@@ -1,0 +1,43 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/variables';
+
+
+.offset-type {
+    cursor:pointer;
+    position: relative;
+}
+
+.offset-type:hover {
+    background-color: $gray-100;
+}
+
+.offset-type .selected-check {
+    font-size: 20px;
+    line-height: 30px;
+    text-align:center;
+    color:#FFF!important;
+    display: block;
+    height:30px;
+    width:30px;
+    border-radius: 15px;
+    background-color:$primary;
+    position: absolute;
+    top:.5rem;
+    right:.5rem;
+}
+
+.icon-container {
+    height:40px;
+    width:40px;
+    border-radius:8px;
+    &.affordable {
+        background-color:#7EF7B6;
+    }
+    &.permanent {
+        background-color: #80B2FF;
+    }
+    &.rd {
+        background-color: #FECE24;
+    }
+}
