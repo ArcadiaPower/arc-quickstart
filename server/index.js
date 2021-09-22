@@ -5,8 +5,7 @@ const { PORT } = process.env;
 
 import express from 'express';
 import cors from 'cors';
-import { env } from 'process';
-import { validateWebhookSignature, getUtilityConnectToken } from './utils.js';
+import { validateWebhookSignature, getUtilityConnectToken, calculateStatementsAverageUsage } from './utils.js';
 
 
 const port = PORT || 3000;
@@ -19,6 +18,11 @@ const corsOptions = {
   origin: ['http://localhost:8080'],
 };
 app.use(cors(corsOptions));
+
+// Absent actual user mgmt, we'll use this global var to keep track of the current User Id
+let currentClientUserId = null;
+// We will save statement data to this global var #hackathon-code
+let averageStatementUsage = null;
 
 // This endpoint will be used by the FE to request a particular carbon offset project
 app.get('/carbon_offset_projects', async(req, res) => {
@@ -45,11 +49,14 @@ app.get('/grid_mix', async(req, res) => {
 
 // This is the endpoint used by the Utility Connect Component (in utility-connect-widget.jsx) to request a Utility Connect Token
 app.post('/utility_connect_token', async (req, res) => {
+
   try {
-    const utilityConnectToken = await getUtilityConnectToken();
+    const utilityConnectDetails = await getUtilityConnectToken();
+    const utilityConnectToken = utilityConnectDetails.utilityConnectToken;
+    console.log("Setting the current user client ID", utilityConnectDetails.clientUserId);
+    currentClientUserId = utilityConnectDetails.clientUserId;
     res.json({ utilityConnectToken });
   } catch (error) {
-    console.log(error);
 
     if (error.response) {
       res.status(error.response.status).send(error.response.data);
@@ -59,13 +66,38 @@ app.post('/utility_connect_token', async (req, res) => {
   }
 });
 
+// This endpoint should be polled. It will return HTTP 400 when we are still waiting for statement data and
+// HTTP 200 with JSON when we have finally received the data
+app.get('/statements_average', (req, res) => {
+  if (averageStatementUsage !== null) {
+    res.json({average_kwh: averageStatementUsage });
+  } else {
+    res.sendStatus(400);
+  }
+})
+
 // This is the endpoint that webhooks are delivered to
 app.post('/webhook_listener', (req, res) => {
-  validateWebhookSignature(req);
+  // TODO: Disabling webhook signatures validation because it seems to be broken
+  // validateWebhookSignature(req);
 
-  // TODO: Specifically filter for statements for the user that just submitted creds
-  console.log('Received a webhook with data:');
-  console.dir(JSON.parse(req.body), { depth: null });
+  const webhookPacket = JSON.parse(req.body);
+
+  // If this isn't a webhook for this particular user, abort
+  if (currentClientUserId == null || webhookPacket.data.client_user_id !== currentClientUserId) {
+    return res.sendStatus(200);
+  }
+
+  // If this isn't a webhook for statements, abort
+  if (webhookPacket.type !== 'historical_utility_statements_discovered') {
+    return res.sendStatus(200);
+  }
+
+  // At this point in the codepath, this is a webhook with statements for the user so calculate the monthly average
+  averageStatementUsage = calculateStatementsAverageUsage(webhookPacket.data.statements);
+
+  console.log("Set the global statement average to: ", averageStatementUsage, 'kwh');
+
   res.sendStatus(200);
 });
 
