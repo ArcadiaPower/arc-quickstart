@@ -21,7 +21,7 @@ export const getUtilityConnectToken = async () => {
   };
 
   // In your application this should be the unique ID you have associated with the user
-  const clientUserId = parseInt(String(new Date().getTime()).substr(-5));
+  const clientUserId = parseInt(String(new Date().getTime()).substr(-5)).toString();
 
   const utilityConnectTokenResponse = await arcadiaApi.post(
     '/auth/utility_connect_token',
@@ -31,7 +31,10 @@ export const getUtilityConnectToken = async () => {
     },
   );
 
-  return utilityConnectTokenResponse.data.utility_connect_token;
+  return {
+    utilityConnectToken: utilityConnectTokenResponse.data.utility_connect_token,
+    clientUserId: clientUserId
+  };
 };
 
 const secondsToStale = 300; // 5 minutes
@@ -61,3 +64,9 @@ export const validateWebhookSignature = req => {
     throw Error('The calculated signature does not match the signature provided in the request header');
   }
 };
+
+export const calculateStatementsAverageUsage = statements => {
+  return statements.reduce(function (sum, statement) {
+    return sum + statement.kwh;
+  }, 0) / statements.length;
+}
