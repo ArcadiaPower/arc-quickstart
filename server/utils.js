@@ -3,7 +3,8 @@ import { createHmac } from 'crypto';
 import { env } from 'process';
 import timingSafeCompare from 'tsscmp';
 
-export const getUtilityConnectToken = async () => {
+// Generates a random, unique client_user_id and fetches a Utility Connect Token scoped to it
+export const getUtilityConnectDetails = async () => {
   const arcadiaApi = axios.create({
     baseURL: 'https://sandbox.api.arcadia.com',
   });
@@ -31,7 +32,12 @@ export const getUtilityConnectToken = async () => {
     },
   );
 
-  return utilityConnectTokenResponse.data.utility_connect_token;
+  // Return the Utility Connect Token so the front-end can initialize Utility Connect
+  // Also return the client_user_id for the purposes of this demo so it can filter incoming webhooks
+  return {
+    utilityConnectToken: utilityConnectTokenResponse.data.utility_connect_token,
+    clientUserId: clientUserId
+  };
 };
 
 const secondsToStale = 300; // 5 minutes
@@ -60,4 +66,9 @@ export const validateWebhookSignature = req => {
   if (!timingSafeCompare(webhookSignature, calculatedSignature)) {
     throw Error('The calculated signature does not match the signature provided in the request header');
   }
+};
+
+export const logWebhookContents = webhookBody => {
+  console.log('Received a webhook with data:');
+  console.dir(webhookBody, { depth: null });
 };
