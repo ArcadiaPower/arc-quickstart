@@ -15,6 +15,18 @@ app.use(express.text({type: '*/*'}));
 
 // In this contrived example, use this global var to keep track of the current User ID
 let currentClientUserId = null;
+const matchesClientId = (webhookPacket) => {
+  // Check if data (object or array) contains client user id
+  if (!currentClientUserId) return false
+  const isArray = webhookPacket.data.length >= 0
+  if (isArray) {
+    return webhookPacket.data.some((data) => {
+      return data.client_user_id === currentClientUserId
+    })
+  } else {
+    return webhookPacket.data.client_user_id === currentClientUserId
+  }
+}
 
 // Allow the browser to send/receive cookies from the Utility Connect Component in development mode
 const corsOptions = {
@@ -48,17 +60,12 @@ app.post('/webhook_listener', (req, res) => {
   validateWebhookSignature(req);
 
   const webhookPacket = JSON.parse(req.body);
-
+  const test = webhookPacket.type === 'test'
   // Always print out test webhook contents because they aren't scoped to a user
-  if (webhookPacket.type === 'test') {
-    logWebhookContents(webhookPacket);
+  if (test || matchesClientId(webhookPacket)) {
+    logWebhookContents(webhookPacket)
   }
-  // Filter webhooks only for packets that reference the set user
-  else if (currentClientUserId !== null && currentClientUserId === webhookPacket.data.client_user_id) {
-    // Log the data
-    logWebhookContents(webhookPacket); 
-  }
-   
+
   res.sendStatus(200);
 });
 
