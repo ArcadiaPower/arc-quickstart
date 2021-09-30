@@ -3,23 +3,41 @@ import { createHmac } from 'crypto';
 import { env } from 'process';
 import timingSafeCompare from 'tsscmp';
 
-// Generates a random, unique client_user_id and fetches a Utility Connect Token scoped to it
-export const getUtilityConnectDetails = async () => {
-  const arcadiaApi = axios.create({
-    baseURL: 'https://sandbox.api.arcadia.com',
-  });
+const arcadiaApi = axios.create({
+  baseURL: 'https://sandbox.api.arcadia.com',
+});
 
+const getAccessToken = async () => {
   const tokenResponse = await arcadiaApi.post('/auth/access_token', {
     client_id: env['ARCADIA_API_CLIENT_ID'],
     client_secret: env['ARCADIA_API_CLIENT_SECRET'],
   });
 
-  const accessToken = tokenResponse.data.access_token;
+  return tokenResponse.data.access_token;
+};
 
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
+const authenticatedHeaders = (accessToken) => {
+  return {
+    'Authorization': `Bearer ${accessToken}`,
     'Content-Type': 'application/json',
   };
+};
+
+export const registerWebhookEndpoint = async (url) => {
+  const accessToken = await getAccessToken();
+
+  const response = await arcadiaApi.post(
+    "/webhook/endpoints",
+    { url: url },
+    { headers: authenticatedHeaders(accessToken) }
+  );
+
+  env['ARCADIA_WEBHOOK_SIGNING_KEY'] = response.data.signing_key;
+};
+
+// Generates a random, unique client_user_id and fetches a Utility Connect Token scoped to it
+export const getUtilityConnectDetails = async () => {
+  const accessToken = await getAccessToken();
 
   // In your application this should be the unique ID you have associated with the user
   const clientUserId = parseInt(String(new Date().getTime()).substr(-5));
@@ -27,9 +45,7 @@ export const getUtilityConnectDetails = async () => {
   const utilityConnectTokenResponse = await arcadiaApi.post(
     '/auth/utility_connect_token',
     { client_user_id: clientUserId },
-    {
-      headers,
-    },
+    { headers: authenticatedHeaders(accessToken) }
   );
 
   // Return the Utility Connect Token so the front-end can initialize Utility Connect

@@ -6,8 +6,9 @@ const { PORT } = process.env;
 import express from 'express';
 import cors from 'cors';
 import { env } from 'process';
-import { validateWebhookSignature, getUtilityConnectDetails, logWebhookContents } from './utils.js';
-
+import { validateWebhookSignature, getUtilityConnectDetails, logWebhookContents, registerWebhookEndpoint } from './utils.js';
+import { spawn } from 'child_process';
+import axios from 'axios';
 
 const port = PORT || 3000;
 const app = express();
@@ -70,6 +71,28 @@ app.post('/webhook_listener', (req, res) => {
 });
 
 // Starts the server
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Backend server running on port ${port}`);
+
+  const ngrokProcess = spawn("ngrok", ["http", port]);
+
+  const ngrokApi = axios.create({
+    baseURL: 'http://localhost:4040'
+  });
+
+  const endpointSetup = async () => {
+    try {
+      const ngrokResponse = await ngrokApi.get("/api/tunnels");
+      const ngrokHttpsUrl = ngrokResponse.data.tunnels.find((tunnel) => {
+        return tunnel.proto === 'https';
+      }).public_url;
+
+      await registerWebhookEndpoint(`${ngrokHttpsUrl}/webhook_listener`);
+    } catch (error) {
+      // retry
+      setTimeout(endpointSetup, 1000);
+    }
+  };
+
+  await endpointSetup();
 });
