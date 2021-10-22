@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUtilityConnect } from '@arcadia-eng/utility-connect-react';
-import { getUtilityConnectToken } from './session';
+import { getUtilityConnectToken, deleteUser } from './session';
 
 const UtilityConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,6 +28,10 @@ const UtilityConnectWidget = () => {
         setError(e.message);
       });
   }, []);
+
+  const deleteUserAndReload = () => {
+    deleteUser(() => window.location.reload(false));
+  }
 
   const generateConfig = utilityConnectToken => {
     return {
@@ -83,7 +87,15 @@ const UtilityConnectWidget = () => {
   }
 
   if (successful) {
-    return <p>You have connected Utility Credential #{utilityCredentialId}! If you've configured a webhook, check your console for incoming data.</p>
+    return (
+      <div>
+        <p>You have connected Utility Credential #{utilityCredentialId}! If you've configured a webhook, check your console for incoming data.</p>
+        <p>In order to try connecting these same credentials, you must delete the user associated with the credentials first:</p>
+        <button type="button" onClick={() => deleteUserAndReload()}>
+          Delete User and Reload
+        </button>
+      </div>
+    )
   }
 
   return (

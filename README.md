@@ -200,6 +200,8 @@ Go through the Utility Connect flow. You can submit [Arcadia-defined test creden
 
 You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after that includes all the user's utility account data. Finally, after a minute or two, you'll receive a `historical_utility_statements_discovered` webhook that contains all of the existing statements we were able to collect for each account.
 
+Note: In order to resubmit the same credentials again, you'll need to delete any users associated with the credentials that were already submitted. The front-end for this demo app provides a button to delete any users that were just connected for convenience, but you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser) if necessary. 
+
 
 ## Digging Deeper
 
