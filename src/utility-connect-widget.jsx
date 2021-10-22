@@ -4,14 +4,13 @@ import { getUtilityConnectToken } from './session';
 
 const UtilityConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [config, setConfig] = useState(null);
   const [successful, setSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [timedOut,  setTimedOut] = useState(false);
   const [utilityCredentialId, setUtilityCredentialId] = useState(null);
 
   // This is the hook for the Utility Connect Component
-  const [{ loading, utilityConnectSetupError }, open] = useUtilityConnect();
+  const [{ utilityConnectSetupError }, open] = useUtilityConnect();
 
   if (utilityConnectSetupError) {
     setError(utilityConnectSetupError.message);
@@ -22,12 +21,13 @@ const UtilityConnectWidget = () => {
     getUtilityConnectToken()
       .then(utilityConnectToken => {
         // We configure the Component using the Utility Connect Token
-        setConfig(generateConfig(utilityConnectToken));
+        open(generateConfig(utilityConnectToken));
       })
       .catch((e) => {
         setError(e.message);
       });
-  }, []);
+  }, [open]);
+
 
   const generateConfig = utilityConnectToken => {
     return {
@@ -86,12 +86,7 @@ const UtilityConnectWidget = () => {
     return <p>You have connected Utility Credential #{utilityCredentialId}! If you've configured a webhook, check your console for incoming data.</p>
   }
 
-  return (
-    // When the button is clicked, we call the Utility Connect Component's open method in order to display the modal
-    <button type="button" disabled={loading || !config} onClick={() => open(config)}>
-      Launch Utility Connect Component
-    </button>
-  );
+  return null;
 };
 
 export default UtilityConnectWidget;
