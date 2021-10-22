@@ -44,7 +44,7 @@ This command will concurrently start:
 1. A React web app demonstrating use of Arcadia's front-end integration component, called Utility Connect.
 2. An example backend [server](./server/index.js) that calls the Arcadia API to create Utility Connect Tokens, which are used to instantiate Utility Connect and scope it to the correct user. The server's webhook endpoint will also print incoming webhook events to the console.
 
-If you open the React app in your browser by navigating to [http://localhost:8080](http://localhost:8080), you can go through the Utility Connect flow and enter utility credentials.
+If you open the React app in your browser by navigating to [http://localhost:8090](http://localhost:8090), you can go through the Utility Connect flow and enter utility credentials.
 
 But how do we start getting utility data from the Arcadia API after a user submits their utility credentials? We'll need to set up webhooks for exactly this purpose.
 
@@ -53,7 +53,7 @@ Let's set up webhooks so that after credentials are submitted via Utility Connec
 
 ### ngrok
 
-In order to receive webhooks, we have to enable public HTTP requests to be received by our private, local development server. Our project is not publicly accessible to the internet because our server is just a local server running on `localhost:3000`, but we can use a tool like [ngrok](https://ngrok.com/) to get a public HTTP endpoint for our local server.
+In order to receive webhooks, we have to enable public HTTP requests to be received by our private, local development server. Our project is not publicly accessible to the internet because our server is just a local server running on `localhost:3010`, but we can use a tool like [ngrok](https://ngrok.com/) to get a public HTTP endpoint for our local server.
 
 `ngrok` is a tool that forwards web traffic (ie Arcadia webhooks) from a public HTTP address to your local machine. You can install ngrok with:
 
@@ -63,13 +63,13 @@ npm install ngrok -g
 
 Note: You will not need to use `ngrok` in a production environment. It's just used when running a local, non-public development environment like this one.
 
-The server of our example project is set up to run on port 3000, so to connect a public IP address to the server, in a new terminal window run:
+The server of our example project is set up to run on port 3010, so to connect a public IP address to the server, in a new terminal window run:
 
 ```.sh
-ngrok http 3000
+ngrok http 3010
 ```
 
-`ngrok` will print the forwarding URL that the tunnel is exposed at -- something like `https://197286121879.ngrok.io`). `ngrok` should also indicate that it's tunneling data to `localhost:3000`. In a new terminal window (so as to not abort the `ngrok` session), save the URL to an environment variable for easier use with `curl` in the subsequent steps:
+`ngrok` will print the forwarding URL that the tunnel is exposed at -- something like `https://197286121879.ngrok.io`). `ngrok` should also indicate that it's tunneling data to `localhost:3010`. In a new terminal window (so as to not abort the `ngrok` session), save the URL to an environment variable for easier use with `curl` in the subsequent steps:
 
 ```.sh
 ARCADIA_TUNNELING_URL=<https URL from ngrok>
@@ -194,7 +194,7 @@ Great, we're all set up to start receiving data!
 
 ## React App: Generate Real Webhooks With Real Credentials
 
-Open up your browser to the React app at [http://localhost:8080](http://localhost:8080). Refresh the page if you already went through the Utility Connect flow in order to reset the example app.
+Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Utility Connect flow in order to reset the example app.
 
 Go through the Utility Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 

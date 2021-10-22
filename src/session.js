@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const backend =
-  process.env['NODE_ENV'] === 'prod' ? window.location.origin : 'http://localhost:3000';
+const backend ='http://localhost:3010';
 
 export const getUtilityConnectToken = async () => {
   const response = await axios.post(`${backend}/utility_connect_token`, {}, { withCredentials: true });
