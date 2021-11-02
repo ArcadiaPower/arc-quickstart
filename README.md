@@ -41,19 +41,18 @@ npm start
 
 This command will concurrently start:
 
-1. A React web app demonstrating use of Arcadia's front-end integration component, called Connect.
-2. An example backend [server](./server/index.js) that calls the Arcadia API to create Connect Tokens, which are used to instantiate Connect and scope it to the correct user. The server's webhook endpoint will also print incoming webhook events to the console.
+1. A React web app integrated with Arc Connect
+2. An example backend [server](./server/index.js) that calls the Arcadia API to create Connect Tokens. Connect Tokens are used to instantiate Connect and scope data to your user. To see the demo and go through the Connect flow navigate to [http://localhost:8090](http://localhost:8090).
 
-If you open the React app in your browser by navigating to [http://localhost:8090](http://localhost:8090), you can go through the Connect flow and enter utility credentials.
 
-But how do we start getting utility data from the Arcadia API after a user submits their utility credentials? We'll need to set up webhooks for exactly this purpose.
+What's next after a user enters their credentials through Connect? You likely want to see the data for this user. We can set up webhooks to get this data in real time.
 
 ## Webhooks
-Let's set up webhooks so that after credentials are submitted via Connect, we can start receiving account-related data. Webhooks allow us to receive data when it's available, rather than constantly polling the server.
+Let's set up webhooks so we can start receiving utility account related data after utility credentials are submitted via Connect. Rather than constantly polling the server, webhooks allow us to receive data as it becomes available,
 
 ### ngrok
 
-In order to receive webhooks, we have to enable public HTTP requests to be received by our private, local development server. Our project is not publicly accessible to the internet because our server is just a local server running on `localhost:3010`, but we can use a tool like [ngrok](https://ngrok.com/) to get a public HTTP endpoint for our local server.
+In order to receive webhooks, we have to enable public HTTP requests to be received by our private, local development server. Our project is not publicly accessible to the internet because our server is running locally at `localhost:3010`. However, we can use a tool like [ngrok](https://ngrok.com/) to get a public HTTP endpoint for our local server.
 
 `ngrok` is a tool that forwards web traffic (ie Arcadia webhooks) from a public HTTP address to your local machine. You can install ngrok with:
 
@@ -61,7 +60,7 @@ In order to receive webhooks, we have to enable public HTTP requests to be recei
 npm install ngrok -g
 ```
 
-Note: You will not need to use `ngrok` in a production environment. It's just used when running a local, non-public development environment like this one.
+Note: You will not need to use `ngrok` in a production environment. This is merely a tool for receiving webhooks on your personal machine.
 
 The server of our example project is set up to run on port 3010, so to connect a public IP address to the server, in a new terminal window run:
 
@@ -190,23 +189,23 @@ Received a webhook with data:  {
 }
 ```
 
-Great, we're all set up to start receiving data!
+Great, we're all set up to start receiving webhook data!
 
-## React App: Generate Real Webhooks With Real Credentials
+## React App: Generate Real Webhooks With Real Utility Credentials
 
 Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Connect flow in order to reset the example app.
 
 
-Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
+Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use utility credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 
-You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after that includes all the user's utility account data. Finally, after a minute or two, you'll receive a `historical_utility_statements_discovered` webhook that contains all of the existing statements we were able to collect for each account.
+You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within seconds of submitting utility credentials. This webhook contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after. This webhook includes all the user's utility account data. Finally, after a minute or two, you'll receive a`historical_utility_statements_discovered` webhook for each utility account discovered. Theese webhooks will contain information on existing utility statements for an account.
 
-Note: In order to resubmit the same credentials again, you'll need to delete any users associated with the credentials that were already submitted. The front-end for this demo app provides a button to delete any users that were just connected for convenience, but you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser) if necessary.
+Note: In order to resubmit the same utility credentials again, you'll need to delete any users associated with the utility credentials. For convenience, the front-end for this demo provides a button to delete a user after connection, However, you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser).
 
 
 ## Digging Deeper
 
-That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [connect-react](https://github.com/ArcadiaPower/connect-react/) project for instructions on how to embed Connect in your own application.
+That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more API capabilities. Checkout [connect-react](https://github.com/ArcadiaPower/connect-react/) for instructions on how to embed Connect into your own application.
 
 
 There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Connect and webhooks into your project:
