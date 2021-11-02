@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@arcadia-eng/connect-react": "^5.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "concurrently": "^6.1.0",
     "react": "^16.14.0",
     "react-dom": "^17.0.2",
