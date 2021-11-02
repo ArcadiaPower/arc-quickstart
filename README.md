@@ -41,7 +41,7 @@ npm start
 
 This command will concurrently start:
 
-1. A React web app integrated with Arc Connect
+1. A React web app using [connect-react](https://github.com/ArcadiaPower/connect-react/) to integrate with Arc Connect
 2. An example backend [server](./server/index.js) that calls the Arcadia API to create Connect Tokens. Connect Tokens are used to instantiate Connect and scope data to your user. To see the demo and go through the Connect flow navigate to [http://localhost:8090](http://localhost:8090).
 
 
