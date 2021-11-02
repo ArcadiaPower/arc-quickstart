@@ -11,7 +11,7 @@ You'll need your Arcadia API keys, a computer that can run Node.js version 14.x,
 
 The first step is to clone this example application. Use `git` to download the repository:
 ```.sh
-git clone https://github.com/ArcadiaPower/platform-quickstart.git
+git clone https://github.com/ArcadiaPower/arc-quickstart.git
 ```
 
 Next, ensure you're using Node.js version 14.x (and NPM version 6.x). The easiest way to do that is by using `nvm` within the project directory (if you don't already have `nvm` installed, see [installation instructions here](https://github.com/nvm-sh/nvm#installing-and-updating)):
