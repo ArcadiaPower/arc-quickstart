@@ -1,4 +1,4 @@
-This project demonstrates how to use Arcadia's [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) component in an example integration against the [Arcadia Developer Platform API](http://developers.arcadia.com).
+This project demonstrates how to use Arcadia's [connect-react](https://github.com/ArcadiaPower/connect-react/) component in an example integration against the [Arcadia Developer Platform API](http://developers.arcadia.com).
 
 # Arcadia's Platform Quickstart
 
@@ -41,15 +41,15 @@ npm start
 
 This command will concurrently start:
 
-1. A React web app demonstrating use of Arcadia's front-end integration component, called Utility Connect.
-2. An example backend [server](./server/index.js) that calls the Arcadia API to create Utility Connect Tokens, which are used to instantiate Utility Connect and scope it to the correct user. The server's webhook endpoint will also print incoming webhook events to the console.
+1. A React web app demonstrating use of Arcadia's front-end integration component, called Connect.
+2. An example backend [server](./server/index.js) that calls the Arcadia API to create Connect Tokens, which are used to instantiate Connect and scope it to the correct user. The server's webhook endpoint will also print incoming webhook events to the console.
 
-If you open the React app in your browser by navigating to [http://localhost:8090](http://localhost:8090), you can go through the Utility Connect flow and enter utility credentials.
+If you open the React app in your browser by navigating to [http://localhost:8090](http://localhost:8090), you can go through the Connect flow and enter utility credentials.
 
 But how do we start getting utility data from the Arcadia API after a user submits their utility credentials? We'll need to set up webhooks for exactly this purpose.
 
 ## Webhooks
-Let's set up webhooks so that after credentials are submitted via Utility Connect, we can start receiving account-related data. Webhooks allow us to receive data when it's available, rather than constantly polling the server.
+Let's set up webhooks so that after credentials are submitted via Connect, we can start receiving account-related data. Webhooks allow us to receive data when it's available, rather than constantly polling the server.
 
 ### ngrok
 
@@ -194,22 +194,23 @@ Great, we're all set up to start receiving data!
 
 ## React App: Generate Real Webhooks With Real Credentials
 
-Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Utility Connect flow in order to reset the example app.
+Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Connect flow in order to reset the example app.
 
-Go through the Utility Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
+
+Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 
 You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within a few seconds that contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after that includes all the user's utility account data. Finally, after a minute or two, you'll receive a `historical_utility_statements_discovered` webhook that contains all of the existing statements we were able to collect for each account.
 
-Note: In order to resubmit the same credentials again, you'll need to delete any users associated with the credentials that were already submitted. The front-end for this demo app provides a button to delete any users that were just connected for convenience, but you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser) if necessary. 
+Note: In order to resubmit the same credentials again, you'll need to delete any users associated with the credentials that were already submitted. The front-end for this demo app provides a button to delete any users that were just connected for convenience, but you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser) if necessary.
 
 
 ## Digging Deeper
 
-That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [utility-connect-react](https://github.com/ArcadiaPower/utility-connect-react/) project for instructions on how to embed Utility Connect in your own application.
+That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more capabilities, or look at our [connect-react](https://github.com/ArcadiaPower/connect-react/) project for instructions on how to embed Connect in your own application.
 
 
-There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Utility Connect and webhooks into your project:
+There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Connect and webhooks into your project:
 
-1. The [implementation of Utility Connect](./src/utility-connect-widget.jsx): this requests a Utility Connect Token from the server, configures Utility Connect, and manages frontend state throughout the component lifecycle.
+1. The [implementation of Connect](./src/connect-widget.jsx): this requests a Connect Token from the server, configures Connect, and manages frontend state throughout the component lifecycle.
 
-2. The [backend server](./server/index.js): this server fetches Utility Connect Tokens on behalf of Utility Connect and logs payload JSON to the console as webhooks are received.
+2. The [backend server](./server/index.js): this server fetches Connect Tokens on behalf of Connect and logs payload JSON to the console as webhooks are received.

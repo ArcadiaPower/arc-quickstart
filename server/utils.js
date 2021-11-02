@@ -18,7 +18,7 @@ const getAccessToken = async () => {
   return tokenResponse.data.access_token;
 }
 
-export const getUtilityConnectDetails = async () => {
+export const getConnectDetails = async () => {
 
   const accessToken = await getAccessToken();
 
@@ -30,18 +30,18 @@ export const getUtilityConnectDetails = async () => {
   // In your application this should be the unique ID you have associated with the user
   const clientUserId = parseInt(String(new Date().getTime()).substr(-5));
 
-  const utilityConnectTokenResponse = await arcadiaApi.post(
-    '/auth/utility_connect_token',
+  const connectTokenResponse = await arcadiaApi.post(
+    '/auth/connect_token',
     { client_user_id: clientUserId },
     {
       headers,
     },
   );
 
-  // Return the Utility Connect Token so the front-end can initialize Utility Connect
+  // Return the Connect Token so the front-end can initialize Connect
   // Also return the client_user_id for the purposes of this demo so it can optionally delete the user
   return {
-    utilityConnectToken: utilityConnectTokenResponse.data.utility_connect_token,
+    connectToken: connectTokenResponse.data.connect_token,
     clientUserId: clientUserId
   };
 };
