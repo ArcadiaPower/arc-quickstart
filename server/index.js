@@ -7,14 +7,14 @@ const { PORT } = process.env;
 import { validateWebhookSignature, getUtilityConnectDetails, deleteUser } from './utils.js';
 
 
-const port = PORT || 3000;
+const port = 3010;
 const app = express();
 app.use(express.text({type: '*/*'}));
 
 // Allow the browser to send/receive cookies from the Utility Connect Component in development mode
 const corsOptions = {
   credentials: true,
-  origin: ['http://localhost:8080'],
+  origin: ['http://localhost:8090'],
 };
 app.use(cors(corsOptions));
 
