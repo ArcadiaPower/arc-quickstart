@@ -1,7 +1,7 @@
 {
-  "name": "platform-quickstart",
+  "name": "arc-quickstart",
   "version": "0.1.0",
-  "description": "A sample app and accompanying walkthrough for the Arcadia API.",
+  "description": "A sample app and accompanying walkthrough for Arcadia's Arc Platform",
   "scripts": {
     "build": "./scripts/build.sh",
     "start": "concurrently \"node ./server\" \"PORT=8090 BROWSER=none react-scripts start\"",
