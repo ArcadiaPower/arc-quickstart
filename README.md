@@ -1,6 +1,6 @@
-This project demonstrates how to use Arcadia's [connect-react](https://github.com/ArcadiaPower/connect-react/) component in an example integration against the [Arcadia Developer Platform API](http://developers.arcadia.com).
+This project demonstrates how to use Arcadia's [connect-react](https://github.com/ArcadiaPower/connect-react/) component in an example integration against the [Arc Platform API](http://developers.arcadia.com).
 
-# Arcadia's Platform Quickstart
+# Arcadia's Arc Quickstart
 
 This example application will load a React web app where you can enter utility credentials. The data related to the utility account will be delivered to your terminal via webhooks.
 
@@ -16,7 +16,7 @@ git clone https://github.com/ArcadiaPower/platform-quickstart.git
 
 Next, ensure you're using Node.js version 14.x (and NPM version 6.x). The easiest way to do that is by using `nvm` within the project directory (if you don't already have `nvm` installed, see [installation instructions here](https://github.com/nvm-sh/nvm#installing-and-updating)):
 ```.sh
-cd platform-quickstart && nvm use
+cd arc-quickstart && nvm use
 ```
 
 Now install the project's dependencies:
@@ -116,7 +116,7 @@ ARC_ACCESS_TOKEN=<access_token from last response>
 ### Webhook Registration
 Now we have the Access Token to register a webhook and the `ngrok` base URL that the webhooks will be sent to.
 
-The backend we started up is designed to print out data received at the [`/webhook_listener` path](https://github.com/ArcadiaPower/platform-quickstart/blob/main/server/index.js#L62). For the local server to receive the webhook, we need to register the URL with the Arcadia API:
+The backend we started up is designed to print out data received at the [`/webhook_listener` path](https://github.com/ArcadiaPower/arc-quickstart/blob/main/server/index.js#L62). For the local server to receive the webhook, we need to register the URL with the Arcadia API:
 
 ```.sh
 curl -i -X POST https://sandbox.api.arcadia.com/webhook/endpoints \
@@ -205,7 +205,7 @@ Note: In order to resubmit the same utility credentials again, you'll need to de
 
 ## Digging Deeper
 
-That concludes the basic platform quickstart! Explore our [Developer Platform API](https://developers.arcadia.com/) for more API capabilities. Checkout [connect-react](https://github.com/ArcadiaPower/connect-react/) for instructions on how to embed Connect into your own application.
+That concludes the basic Arc Quickstart! Explore our [API documentation](https://developers.arcadia.com/) for more Arc capabilities. Checkout [connect-react](https://github.com/ArcadiaPower/connect-react/) for instructions on how to embed Connect into your own application.
 
 
 There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Connect and webhooks into your project:
