@@ -1,12 +1,10 @@
+import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const { PORT } = process.env;
-
-import express from 'express';
-import cors from 'cors';
-import { env } from 'process';
-import { validateWebhookSignature, getUtilityConnectToken } from './utils.js';
+import { validateWebhookSignature, getUtilityConnectDetails, deleteUser } from './utils.js';
 
 
 const port = PORT || 3000;
@@ -20,11 +18,18 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// In this contrived example, use this global var to keep track of the current User ID
+let currentClientUserId = null;
+
 // This is the endpoint used by the Utility Connect Component (in utility-connect-widget.jsx) to request a Utility Connect Token
 app.post('/utility_connect_token', async (req, res) => {
   try {
-    const utilityConnectToken = await getUtilityConnectToken();
-    res.json({ utilityConnectToken });
+    // Create an artificial, unique client_user_id and request a Utility Connect Token
+    const utilityConnectDetails = await getUtilityConnectDetails();
+    // Save the client_user_id so we can filter incoming webhooks to this user
+    currentClientUserId = utilityConnectDetails.clientUserId.toString();
+    // Send the Utility Connect Token to the front-end to initialize Utility Connect scoped to this user
+    res.json({ utilityConnectToken: utilityConnectDetails.utilityConnectToken });
   } catch (error) {
     console.log(error);
 
@@ -33,6 +38,17 @@ app.post('/utility_connect_token', async (req, res) => {
     } else {
       res.sendStatus(500);
     }
+  }
+});
+
+app.post('/delete_user', async (req, res) => {
+  try {
+    await deleteUser(currentClientUserId);
+    currentClientUserId = null;
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
 });
 

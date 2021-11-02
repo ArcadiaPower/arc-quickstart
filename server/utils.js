@@ -1,19 +1,26 @@
 import axios from 'axios';
 import { createHmac } from 'crypto';
-import { env } from 'process';
 import timingSafeCompare from 'tsscmp';
+import dotenv from 'dotenv';
+import { env } from 'process';
+dotenv.config();
 
-export const getUtilityConnectToken = async () => {
-  const arcadiaApi = axios.create({
-    baseURL: 'https://sandbox.api.arcadia.com',
-  });
+const arcadiaApi = axios.create({
+  baseURL: 'https://sandbox.api.arcadia.com',
+});
 
+const getAccessToken = async () => {
   const tokenResponse = await arcadiaApi.post('/auth/access_token', {
     client_id: env['ARCADIA_API_CLIENT_ID'],
     client_secret: env['ARCADIA_API_CLIENT_SECRET'],
   });
 
-  const accessToken = tokenResponse.data.access_token;
+  return tokenResponse.data.access_token;
+}
+
+export const getUtilityConnectDetails = async () => {
+
+  const accessToken = await getAccessToken();
 
   const headers = {
     Authorization: `Bearer ${accessToken}`,
@@ -31,8 +38,29 @@ export const getUtilityConnectToken = async () => {
     },
   );
 
-  return utilityConnectTokenResponse.data.utility_connect_token;
+  // Return the Utility Connect Token so the front-end can initialize Utility Connect
+  // Also return the client_user_id for the purposes of this demo so it can optionally delete the user
+  return {
+    utilityConnectToken: utilityConnectTokenResponse.data.utility_connect_token,
+    clientUserId: clientUserId
+  };
 };
+
+export const deleteUser = async (clientUserId) => {
+  const accessToken = await getAccessToken();
+
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  };
+
+  await arcadiaApi.delete(
+    `/users/${clientUserId}`,
+    {
+      headers,
+    },
+  );
+}
 
 const secondsToStale = 300; // 5 minutes
 
