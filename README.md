@@ -31,7 +31,7 @@ Next, create a `.env` file from the template:
 cp .env-example .env
 ```
 
-Open it and fill in your Arcadia `ARCADIA_API_CLIENT_ID` and `ARCADIA_API_CLIENT_SECRET`. Leave `ARCADIA_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
+Open it and fill in your Arcadia `ARC_API_CLIENT_ID` and `ARC_API_CLIENT_SECRET`. Leave `ARC_WEBHOOK_SIGNING_KEY` as is for now - we'll come back to it.
 
 ## Hello, World
 Let's run the React web app and Node server so we can see this demo application in action.
@@ -71,7 +71,7 @@ ngrok http 3010
 `ngrok` will print the forwarding URL that the tunnel is exposed at -- something like `https://197286121879.ngrok.io`). `ngrok` should also indicate that it's tunneling data to `localhost:3010`. In a new terminal window (so as to not abort the `ngrok` session), save the URL to an environment variable for easier use with `curl` in the subsequent steps:
 
 ```.sh
-ARCADIA_TUNNELING_URL=<https URL from ngrok>
+ARC_TUNNELING_URL=<https URL from ngrok>
 ```
 
 ### Webhook Access Token
@@ -85,8 +85,8 @@ source .env
 ```
 ```.sh
 curl -i -X POST https://sandbox.api.arcadia.com/auth/access_token \
-  -F "client_id=$ARCADIA_API_CLIENT_ID" \
-  -F "client_secret=$ARCADIA_API_CLIENT_SECRET"
+  -F "client_id=$ARC_API_CLIENT_ID" \
+  -F "client_secret=$ARC_API_CLIENT_SECRET"
 ```
 
 Your response should look something like this:
@@ -104,13 +104,13 @@ x-runtime: 0.360905
 x-amzn-trace-id: Root=1-60aec757-21d4794f6c91c82269602213
 vary: Origin
 
-{"access_token":"YOUR_ARCADIA_ACCESS_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1622067032}%
+{"access_token":"YOUR_ARC_ACCESS_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1622067032}%
 ```
 
 Save your Access Token to an environment variable so you don't have to keep copying and pasting across `curl` commands:
 
 ```.sh
-ARCADIA_ACCESS_TOKEN=<access_token from last response>
+ARC_ACCESS_TOKEN=<access_token from last response>
 ```
 
 ### Webhook Registration
@@ -120,8 +120,8 @@ The backend we started up is designed to print out data received at the [`/webho
 
 ```.sh
 curl -i -X POST https://sandbox.api.arcadia.com/webhook/endpoints \
-  -H "Authorization: Bearer $ARCADIA_ACCESS_TOKEN" \
-  -d "url=$ARCADIA_TUNNELING_URL/webhook_listener"
+  -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
+  -d "url=$ARC_TUNNELING_URL/webhook_listener"
 ```
 
 Your response should look something like this:
@@ -138,16 +138,16 @@ x-runtime: 0.025782
 x-amzn-trace-id: Root=1-60aeee63-225b188311ad903f1c41b343
 vary: Origin
 
-{"id":"YOUR_WEBHOOK_ID","url":"ARCADIA_TUNNELING_URL/webhook_listener","signing_key":"ARCADIA_WEBHOOK_SIGNING_KEY","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
+{"id":"YOUR_ARC_WEBHOOK_ENDPOINT_ID","url":"ARC_TUNNELING_URL/webhook_listener","signing_key":"ARC_WEBHOOK_SIGNING_KEY","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
 ```
 
 Now let's save the webhook ID to an environment variable for ease of access in subsequent commands:
 
 ```.sh
-ARCADIA_WEBHOOK_ID=<id from last response>
+ARC_WEBHOOK_ENDPOINT_ID=<id from last response>
 ```
 
-We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARCADIA_WEBHOOK_SIGNING_KEY` environment variable. **Note that if your server is still running, it will need to be stopped and started again to pick up this change.**
+We should also copy the value from the `signing_key` field in the response to `.env` in order to set the `ARC_WEBHOOK_SIGNING_KEY` environment variable. **Note that if your server is still running, it will need to be stopped and started again to pick up this change.**
 
 Your registered webhook endpoint is only valid as long as your ngrok session is active. Note that if you terminate your `ngrok` session, or if your session expires after the default limit of 2 hours, you will need to re-run the `ngrok` command and register a new webhook.
 
@@ -162,8 +162,8 @@ npm start
 
 Use the [webhook test endpoint](https://developers.arcadia.com/#operation/testWebhook) to trigger a test webhook from Arcadia:
 ```.sh
-curl -i -X PUT https://sandbox.api.arcadia.com/webhook/endpoints/$ARCADIA_WEBHOOK_ID/test \
-    -H "Authorization: Bearer $ARCADIA_ACCESS_TOKEN"
+curl -i -X PUT https://sandbox.api.arcadia.com/webhook/endpoints/$ARC_WEBHOOK_ENDPOINT_ID/test \
+    -H "Authorization: Bearer $ARC_ACCESS_TOKEN"
 ```
 
 Your response should look something like this:
@@ -196,7 +196,7 @@ Great, we're all set up to start receiving webhook data!
 Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Connect flow in order to reset the example app.
 
 
-Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARCADIA_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use utility credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
+Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARC_TEST_R_SINGLE_ELEC	` and a password of `verified` or you can use utility credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 
 You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within seconds of submitting utility credentials. This webhook contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after. This webhook includes all the user's utility account data. Finally, after a minute or two, you'll receive a`historical_utility_statements_discovered` webhook for each utility account discovered. Theese webhooks will contain information on existing utility statements for an account.
 
