@@ -11,14 +11,14 @@ const arcadiaApi = axios.create({
 
 const getAccessToken = async () => {
   const tokenResponse = await arcadiaApi.post('/auth/access_token', {
-    client_id: env['ARCADIA_API_CLIENT_ID'],
-    client_secret: env['ARCADIA_API_CLIENT_SECRET'],
+    client_id: env['ARC_API_CLIENT_ID'],
+    client_secret: env['ARC_API_CLIENT_SECRET'],
   });
 
   return tokenResponse.data.access_token;
 }
 
-export const getUtilityConnectDetails = async () => {
+export const getConnectDetails = async () => {
 
   const accessToken = await getAccessToken();
 
@@ -30,18 +30,18 @@ export const getUtilityConnectDetails = async () => {
   // In your application this should be the unique ID you have associated with the user
   const clientUserId = parseInt(String(new Date().getTime()).substr(-5));
 
-  const utilityConnectTokenResponse = await arcadiaApi.post(
-    '/auth/utility_connect_token',
+  const connectTokenResponse = await arcadiaApi.post(
+    '/auth/connect_token',
     { client_user_id: clientUserId },
     {
       headers,
     },
   );
 
-  // Return the Utility Connect Token so the front-end can initialize Utility Connect
+  // Return the Connect Token so the front-end can initialize Connect
   // Also return the client_user_id for the purposes of this demo so it can optionally delete the user
   return {
-    utilityConnectToken: utilityConnectTokenResponse.data.utility_connect_token,
+    connectToken: connectTokenResponse.data.connect_token,
     clientUserId: clientUserId
   };
 };
@@ -68,14 +68,14 @@ export const validateWebhookSignature = req => {
   const nowTimestamp = Math.floor( Date.now() / 1000 ); // Seconds since epoch
 
   // 1. Extract the timestamp and signatures from the header
-  const webhookTimestamp = req.header('Arcadia-Webhook-Timestamp');
-  const webhookSignature = req.header('Arcadia-Webhook-Signature');
+  const webhookTimestamp = req.header('Arc-Webhook-Timestamp');
+  const webhookSignature = req.header('Arc-Webhook-Signature');
 
   // 2. Prepare the payload string by concatenating the timestamp with the body
   const payloadToSign = `${webhookTimestamp}.${req.body}`;
 
   // 3. Calculate the Signature using your Arcadia Webhook Secret
-  const hmac = createHmac('sha256', env['ARCADIA_WEBHOOK_SIGNING_KEY']);
+  const hmac = createHmac('sha256', env['ARC_WEBHOOK_SIGNING_KEY']);
   const calculatedSignature = hmac.update(payloadToSign).digest('hex');
 
   // 4. If the timestamp is older than the threshold, this may be a replay attack

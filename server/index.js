@@ -1,17 +1,17 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { validateWebhookSignature, getConnectDetails, deleteUser } from './utils.js';
 dotenv.config();
 
 const { PORT } = process.env;
-import { validateWebhookSignature, getUtilityConnectDetails, deleteUser } from './utils.js';
 
 
 const port = 3010;
 const app = express();
 app.use(express.text({type: '*/*'}));
 
-// Allow the browser to send/receive cookies from the Utility Connect Component in development mode
+// Allow the browser to send/receive cookies from the Connect Component in development mode
 const corsOptions = {
   credentials: true,
   origin: ['http://localhost:8090'],
@@ -21,15 +21,15 @@ app.use(cors(corsOptions));
 // In this contrived example, use this global var to keep track of the current User ID
 let currentClientUserId = null;
 
-// This is the endpoint used by the Utility Connect Component (in utility-connect-widget.jsx) to request a Utility Connect Token
-app.post('/utility_connect_token', async (req, res) => {
+// This is the endpoint used by Connect (in connect-widget.jsx) to request a Connect Token
+app.post('/connect_token', async (req, res) => {
   try {
-    // Create an artificial, unique client_user_id and request a Utility Connect Token
-    const utilityConnectDetails = await getUtilityConnectDetails();
+    // Create an artificial, unique client_user_id and request a Connect Token
+    const connectDetails = await getConnectDetails();
     // Save the client_user_id so we can filter incoming webhooks to this user
-    currentClientUserId = utilityConnectDetails.clientUserId.toString();
-    // Send the Utility Connect Token to the front-end to initialize Utility Connect scoped to this user
-    res.json({ utilityConnectToken: utilityConnectDetails.utilityConnectToken });
+    currentClientUserId = connectDetails.clientUserId.toString();
+    // Send the Connect Token to the front-end to initialize Connect scoped to this user
+    res.json({ connectToken: connectDetails.connectToken });
   } catch (error) {
     console.log(error);
 

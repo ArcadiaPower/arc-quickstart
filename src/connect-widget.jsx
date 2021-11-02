@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useUtilityConnect } from '@arcadia-eng/utility-connect-react';
-import { getUtilityConnectToken, deleteUser } from './session';
+import { useConnect } from '@arcadia-eng/connect-react';
+import { getConnectToken, deleteUser } from './session';
 
-const UtilityConnectWidget = () => {
+const ConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [config, setConfig] = useState(null);
   const [successful, setSuccessful] = useState(false);
@@ -10,19 +10,19 @@ const UtilityConnectWidget = () => {
   const [timedOut,  setTimedOut] = useState(false);
   const [utilityCredentialId, setUtilityCredentialId] = useState(null);
 
-  // This is the hook for the Utility Connect Component
-  const [{ loading, utilityConnectSetupError }, open] = useUtilityConnect();
+  // This is the hook for the Connect Component
+  const [{ loading, connectSetupError }, open] = useConnect();
 
-  if (utilityConnectSetupError) {
-    setError(utilityConnectSetupError.message);
+  if (connectSetupError) {
+    setError(connectSetupError.message);
   }
 
-  // The first time this Component renders, we ask the server to fetch a Utility Connect Token from the Arcadia API
+  // The first time this Component renders, we ask the server to fetch a Connect Token from the Arcadia API
   useEffect(() => {
-    getUtilityConnectToken()
-      .then(utilityConnectToken => {
-        // We configure the Component using the Utility Connect Token
-        setConfig(generateConfig(utilityConnectToken));
+    getConnectToken()
+      .then(connectToken => {
+        // We configure the Component using the Connect Token
+        setConfig(generateConfig(connectToken));
       })
       .catch((e) => {
         setError(e.message);
@@ -33,19 +33,19 @@ const UtilityConnectWidget = () => {
     deleteUser(() => window.location.reload(false));
   }
 
-  const generateConfig = utilityConnectToken => {
+  const generateConfig = connectToken => {
     return {
-      utilityConnectToken,
+      connectToken,
       env: 'sandbox',
       callbacks: {
-        // Called each time the Utility Connect Component is opened.
+        // Called each time the Connect Component is opened.
         onOpen: () => {
           setModalOpen(true);
         },
         onCredentialsSubmitted: ({ utilityCredentialId }) => {
           setUtilityCredentialId(utilityCredentialId);
         },
-        // Called each time the Utility Connect Component is closed.
+        // Called each time the Connect Component is closed.
         onClose: ({ status }) => {
           switch (status) {
             // A user submitted their credentials and those credentials were verified during the regular course of the Component's user experience
@@ -53,7 +53,7 @@ const UtilityConnectWidget = () => {
               setSuccessful(true);
               break;
             // A user submitted their credentials but they could not be verified in a reasonable amount of time before the Component redirected the user back to your app.
-            // Credentials will still be verified in the background, but if your receive a UtilityCredentialRejected webhook, you'll need to prompt this user to enter the Utility Connect process again.
+            // Credentials will still be verified in the background, but if your receive a UtilityCredentialRejected webhook, you'll need to prompt this user to enter the Connect process again.
             case "timed_out":
               setSuccessful(true);
               setTimedOut(true);
@@ -99,11 +99,11 @@ const UtilityConnectWidget = () => {
   }
 
   return (
-    // When the button is clicked, we call the Utility Connect Component's open method in order to display the modal
+    // When the button is clicked, we call Connect's open method in order to display the modal
     <button type="button" disabled={loading || !config} onClick={() => open(config)}>
-      Launch Utility Connect Component
+      Launch Connect
     </button>
   );
 };
 
-export default UtilityConnectWidget;
+export default ConnectWidget;

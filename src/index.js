@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import UtilityConnectWidget from './utility-connect-widget.jsx';
+import ConnectWidget from './connect-widget.jsx';
 
 ReactDOM.render(
   <React.StrictMode>
-    <UtilityConnectWidget />
+    <ConnectWidget />
   </React.StrictMode>,
   document.getElementById('root')
 );
