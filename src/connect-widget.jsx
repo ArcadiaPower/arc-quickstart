@@ -72,7 +72,6 @@ const ConnectWidget = () => {
       poll: {
         timeout: 30000,
       },
-      uiTheme: 'dark',
     };
   };
 
