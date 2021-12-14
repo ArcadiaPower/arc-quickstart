@@ -6,7 +6,7 @@ import { env } from 'process';
 dotenv.config();
 
 const arcadiaApi = axios.create({
-  baseURL: 'https://sandbox.api.arcadia.com',
+  baseURL: 'https://api.arcadia.com',
 });
 
 const getAccessToken = async () => {
