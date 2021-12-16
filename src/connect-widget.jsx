@@ -36,7 +36,6 @@ const ConnectWidget = () => {
   const generateConfig = connectToken => {
     return {
       connectToken,
-      env: 'sandbox',
       callbacks: {
         // Called each time the Connect Component is opened.
         onOpen: () => {

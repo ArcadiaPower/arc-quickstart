@@ -84,7 +84,7 @@ To request an Access Token, we'll load the API Keys into our shell environment a
 source .env
 ```
 ```.sh
-curl -i -X POST https://sandbox.api.arcadia.com/auth/access_token \
+curl -i -X POST https://api.arcadia.com/auth/access_token \
   -F "client_id=$ARC_API_CLIENT_ID" \
   -F "client_secret=$ARC_API_CLIENT_SECRET"
 ```
@@ -119,7 +119,7 @@ Now we have the Access Token to register a webhook and the `ngrok` base URL that
 The backend we started up is designed to print out data received at the [`/webhook_listener` path](https://github.com/ArcadiaPower/arc-quickstart/blob/main/server/index.js#L62). For the local server to receive the webhook, we need to register the URL with the Arcadia API:
 
 ```.sh
-curl -i -X POST https://sandbox.api.arcadia.com/webhook/endpoints \
+curl -i -X POST https://api.arcadia.com/webhook/endpoints \
   -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
   -d "url=$ARC_TUNNELING_URL/webhook_listener"
 ```
@@ -162,7 +162,7 @@ npm start
 
 Use the [webhook test endpoint](https://developers.arcadia.com/#operation/testWebhook) to trigger a test webhook from Arcadia:
 ```.sh
-curl -i -X PUT https://sandbox.api.arcadia.com/webhook/endpoints/$ARC_WEBHOOK_ENDPOINT_ID/test \
+curl -i -X PUT https://api.arcadia.com/webhook/endpoints/$ARC_WEBHOOK_ENDPOINT_ID/test \
     -H "Authorization: Bearer $ARC_ACCESS_TOKEN"
 ```
 
