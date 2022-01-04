@@ -68,9 +68,6 @@ const ConnectWidget = () => {
           setError(error);
         },
       },
-      poll: {
-        timeout: 30000,
-      },
     };
   };
 
