@@ -1,6 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+      .connectButton {
+        background: rgb(0, 64, 55);
+        border: 1px solid rgb(0, 64, 55);
+        color: rgb(255, 255, 255);
+        border-radius: 8px;
+        font-family: "DM Sans Bold", sans-serif;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        padding: 15px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.1s ease 0s;
+        white-space: normal;
+        -webkit-font-smoothing: antialiased;
+        margin: 0px;
+      }
+      .connectButton:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+      .connectButton:hover {
+        background: rgb(0, 58, 50);
+      }
+    </style>
     <meta charset="utf-8" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any">

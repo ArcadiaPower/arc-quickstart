@@ -35,7 +35,7 @@ const ConnectWidget = () => {
 
   const renderConnectBtn = (
       // When the button is clicked, we call Connect's open method in order to display the modal
-      <button type="button" disabled={loading || !config} onClick={() => open(config)}>
+      <button type="button" className="connectButton" disabled={loading || !config} onClick={() => open(config)}>
         Launch Connect
       </button>
   );
