@@ -33,6 +33,13 @@ const ConnectWidget = () => {
     deleteUser(() => window.location.reload(false));
   }
 
+  const renderConnectBtn = (
+      // When the button is clicked, we call Connect's open method in order to display the modal
+      <button type="button" disabled={loading || !config} onClick={() => open(config)}>
+        Launch Connect
+      </button>
+  );
+
   const generateConfig = connectToken => {
     return {
       connectToken,
@@ -43,6 +50,7 @@ const ConnectWidget = () => {
         },
         onCredentialsSubmitted: ({ utilityCredentialId }) => {
           setUtilityCredentialId(utilityCredentialId);
+          setError(null);
         },
         // Called each time the Connect Component is closed.
         onClose: ({ status }) => {
@@ -65,7 +73,9 @@ const ConnectWidget = () => {
         },
         // Called if there was a catastrophic error when submitting the user's credential
         onError: ({ error }) => {
-          setError(error);
+          let errorMessage = error?.response?.data?.error ?? error.message;
+          errorMessage = typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage)
+          setError(errorMessage);
         },
       },
     };
@@ -74,7 +84,12 @@ const ConnectWidget = () => {
   if (modalOpen) return null;
 
   if (error) {
-    return <p>Uh oh! We hit a problem: {error} </p>;
+    return (
+        <div>
+          <p>Uh oh! We hit a problem: {error} </p>
+          {renderConnectBtn}
+        </div>
+    )
   }
 
   if (timedOut) {
@@ -94,10 +109,7 @@ const ConnectWidget = () => {
   }
 
   return (
-    // When the button is clicked, we call Connect's open method in order to display the modal
-    <button type="button" disabled={loading || !config} onClick={() => open(config)}>
-      Launch Connect
-    </button>
+    renderConnectBtn
   );
 };
 
