@@ -68,7 +68,7 @@ The server of our example project is set up to run on port 3010, so to connect a
 ngrok http 3010
 ```
 
-`ngrok` will print the forwarding URL that the tunnel is exposed at -- something like `https://197286121879.ngrok.io`). `ngrok` should also indicate that it's tunneling data to `localhost:3010`. In a new terminal window (so as to not abort the `ngrok` session), save the URL to an environment variable for easier use with `curl` in the subsequent steps:
+`ngrok` will print the forwarding URL that the tunnel is exposed at -- something like `https://197286121879.ngrok.io`. `ngrok` should also indicate that it's tunneling data to `localhost:3010`. In a new terminal window (so as to not abort the `ngrok` session), save the URL to an environment variable for easier use with `curl` in the subsequent steps:
 
 ```.sh
 ARC_TUNNELING_URL=<https URL from ngrok>
@@ -86,25 +86,26 @@ source .env
 ```.sh
 curl -i -X POST https://api.arcadia.com/auth/access_token \
   -F "client_id=$ARC_API_CLIENT_ID" \
-  -F "client_secret=$ARC_API_CLIENT_SECRET"
+  -F "client_secret=$ARC_API_CLIENT_SECRET" \
+  -H "'Arc-Version': '2021-11-17'"
 ```
 
 Your response should look something like this:
-```
+```.sh
 HTTP/2 200
-date: Wed, 26 May 2021 22:10:32 GMT
+date: Fri, 29 Jul 2022 16:17:21 GMT
 content-type: application/json; charset=utf-8
 content-length: 142
 x-frame-options: ALLOWALL
 cache-control: private, no-store
 pragma: no-cache
-etag: W/"2936966eeb8a0c0896610ede6dc6f015"
-x-request-id: 973379cc-6183-470f-ab96-777fda13c9bd
-x-runtime: 0.360905
-x-amzn-trace-id: Root=1-60aec757-21d4794f6c91c82269602213
+etag: W/"8c7f6bc44d7745bd8c56abfdec390be0"
+x-request-id: d7fa17eb-b6f1-421e-a83b-6a068973da47
+x-runtime: 0.230986
+x-amzn-trace-id: Root=1-62e40811-433e26ca14ef07465a4006b7
 vary: Origin
 
-{"access_token":"YOUR_ARC_ACCESS_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1622067032}%
+{"access_token":"ARC_ACCESS_TOKEN","token_type":"Bearer","expires_in":7200,"scope":"write","created_at":1659111441}
 ```
 
 Save your Access Token to an environment variable so you don't have to keep copying and pasting across `curl` commands:
@@ -121,24 +122,26 @@ The backend we started up is designed to print out data received at the [`/webho
 ```.sh
 curl -i -X POST https://api.arcadia.com/webhook/endpoints \
   -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
+  -H "'Arc-Version': '2021-11-17'"\
   -d "url=$ARC_TUNNELING_URL/webhook_listener"
 ```
 
 Your response should look something like this:
 ```.sh
 HTTP/2 200
-date: Thu, 27 May 2021 00:57:07 GMT
+date: Fri, 29 Jul 2022 16:18:08 GMT
 content-type: application/json; charset=utf-8
-content-length: 190
+content-length: 288
 x-frame-options: ALLOWALL
-etag: W/"e525d19319fb4157b672cbbcfcd96630"
+arc-version: 2021-11-17
+etag: W/"f4e7d42d4e8e9de7b1db97fe0534182e"
 cache-control: max-age=0, private, must-revalidate
-x-request-id: f68888b9-e34d-486e-996f-a51770a77fda
-x-runtime: 0.025782
-x-amzn-trace-id: Root=1-60aeee63-225b188311ad903f1c41b343
+x-request-id: f67bb652-a15a-4988-8e96-6d1c0d501a40
+x-runtime: 0.194169
+x-amzn-trace-id: Root=1-62e40840-70b526ce4db891c574a8b9d0
 vary: Origin
 
-{"id":"YOUR_ARC_WEBHOOK_ENDPOINT_ID","url":"ARC_TUNNELING_URL/webhook_listener","signing_key":"ARC_WEBHOOK_SIGNING_KEY","created_at":"2021-05-26T20:57:07.239-04:00","updated_at":"2021-05-26T20:57:07.239-04:00"}
+{"id":"ARC_WEBHOOK_ENDPOINT_ID","url":"ARC_TUNNELING_URL/webhook_listener"/webhook_listener","created_at":"2022-07-29T12:18:08.940-04:00","updated_at":"2022-07-29T12:18:08.940-04:00","sandboxed":true,"enabled":true,"arc_version":"2021-11-17","signing_key":"ARC_WEBHOOK_SIGNING_KEY"}
 ```
 
 Now let's save the webhook ID to an environment variable for ease of access in subsequent commands:
@@ -163,20 +166,22 @@ npm start
 Use the [webhook test endpoint](https://developers.arcadia.com/#operation/testWebhook) to trigger a test webhook from Arcadia:
 ```.sh
 curl -i -X PUT https://api.arcadia.com/webhook/endpoints/$ARC_WEBHOOK_ENDPOINT_ID/test \
-    -H "Authorization: Bearer $ARC_ACCESS_TOKEN"
+    -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
+    -H "'Arc-Version': '2021-11-17'"
 ```
 
 Your response should look something like this:
 ```.sh
 HTTP/2 202
-date: Thu, 27 May 2021 01:08:48 GMT
-content-type: text/html
+date: Fri, 29 Jul 2022 16:23:30 GMT
+content-type: application/json
 content-length: 0
 x-frame-options: ALLOWALL
+arc-version: 2021-11-17
 cache-control: no-cache
-x-request-id: cb16484e-ea0d-45a8-aea2-0cb28b2501c6
-x-runtime: 0.106986
-x-amzn-trace-id: Root=1-60aef120-728936b118f59fb003e2b693
+x-request-id: 4693266e-f76d-4d92-a410-af5ceeca6fa3
+x-runtime: 0.058218
+x-amzn-trace-id: Root=1-62e40982-687a93c350c3ba600899e92e
 vary: Origin
 ```
 
