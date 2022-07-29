@@ -18,15 +18,15 @@ const getAccessToken = async () => {
   return tokenResponse.data.access_token;
 }
 
+const setHeaders = (token) => ({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'Arc-Version': '2021-11-17',
+});
+
 export const getConnectDetails = async () => {
 
   const accessToken = await getAccessToken();
-
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json',
-  };
-
   // In your application this should be the unique ID you have associated with the user
   const clientUserId = parseInt(String(new Date().getTime()).substr(-5));
 
@@ -34,7 +34,7 @@ export const getConnectDetails = async () => {
     '/auth/connect_token',
     { client_user_id: clientUserId },
     {
-      headers,
+      headers: setHeaders(accessToken),
     },
   );
 
@@ -49,15 +49,10 @@ export const getConnectDetails = async () => {
 export const deleteUser = async (clientUserId) => {
   const accessToken = await getAccessToken();
 
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json',
-  };
-
   await arcadiaApi.delete(
     `/users/${clientUserId}`,
     {
-      headers,
+      headers: setHeaders(accessToken),
     },
   );
 }
