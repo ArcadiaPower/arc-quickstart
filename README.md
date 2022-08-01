@@ -87,7 +87,7 @@ source .env
 curl -i -X POST https://api.arcadia.com/auth/access_token \
   -F "client_id=$ARC_API_CLIENT_ID" \
   -F "client_secret=$ARC_API_CLIENT_SECRET" \
-  -H "'Arc-Version': '2021-11-17'"
+  -H "Arc-Version: 2021-11-17"
 ```
 
 Your response should look something like this:
@@ -99,6 +99,7 @@ content-length: 142
 x-frame-options: ALLOWALL
 cache-control: private, no-store
 pragma: no-cache
+arc-version: 2021-11-17
 etag: W/"8c7f6bc44d7745bd8c56abfdec390be0"
 x-request-id: d7fa17eb-b6f1-421e-a83b-6a068973da47
 x-runtime: 0.230986
@@ -122,7 +123,7 @@ The backend we started up is designed to print out data received at the [`/webho
 ```.sh
 curl -i -X POST https://api.arcadia.com/webhook/endpoints \
   -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
-  -H "'Arc-Version': '2021-11-17'"\
+  -H "Arc-Version: 2021-11-17" \
   -d "url=$ARC_TUNNELING_URL/webhook_listener"
 ```
 
@@ -167,7 +168,7 @@ Use the [webhook test endpoint](https://developers.arcadia.com/#operation/testWe
 ```.sh
 curl -i -X PUT https://api.arcadia.com/webhook/endpoints/$ARC_WEBHOOK_ENDPOINT_ID/test \
     -H "Authorization: Bearer $ARC_ACCESS_TOKEN" \
-    -H "'Arc-Version': '2021-11-17'"
+    -H "Arc-Version: 2021-11-17"
 ```
 
 Your response should look something like this:
