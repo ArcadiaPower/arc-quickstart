@@ -1,5 +1,5 @@
 {
-  "name": "enterprise-demo-server",
+  "name": "counterfactual-bill-calculation-quickstart-server",
   "version": "1.0.0",
   "description": "Node server for React app",
   "main": "index.js",
