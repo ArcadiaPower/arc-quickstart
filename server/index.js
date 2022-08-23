@@ -32,7 +32,10 @@ app.post("/create_genability_account", async (req, res) => {
   const { utilityAccountId } = req.body;
   try {
     const arcUtilityAccount = await getUtilityAccount(utilityAccountId);
-    genabilityAccountId = await createSwitchAccount(arcUtilityAccount);
+    const genabilityAccount = await createSwitchAccount(arcUtilityAccount);
+    genabilityAccountId = genabilityAccount.accountId;
+
+    res.json({ genabilityAccount });
     res.status(200);
   } catch (error) {
     console.log(error);
@@ -44,7 +47,7 @@ app.get("/fetch_utility_statements", async (req, res) => {
 
   try {
     const arcUtilityStatements = await getUtilityStatements(utilityAccountId);
-    console.log("statements!", arcUtilityStatements);
+
     res.json({ utilityStatements: arcUtilityStatements });
     res.status(200);
   } catch (error) {

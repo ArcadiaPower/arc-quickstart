@@ -39,7 +39,7 @@ export const createSwitchAccount = async (arcUtilityAccount) => {
     headers: genabilityHeaders,
   });
 
-  return response.data.results[0].accountId;
+  return response.data.results[0];
 };
 
 // We are updating the tariff collection everytime we try to calculate a counterfactual bill.
