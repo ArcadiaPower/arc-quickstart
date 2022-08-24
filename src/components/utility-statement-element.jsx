@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
-import { string } from 'prop-types';
+import { object } from 'prop-types';
 import CalculationModal from './calculation-modal.jsx'
 
 const UtilityStatementElement = ({arcUtilityStatement}) => {
@@ -17,13 +17,13 @@ const UtilityStatementElement = ({arcUtilityStatement}) => {
       <button onClick={calculateCounterFactualBill}>
         Calculate Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}
       </button>
-      {openModal && <CalculationModal/>}
+      {openModal && <CalculationModal setOpenModal={setOpenModal}/>}
     </div> 
   )
 };
 
 UtilityStatementElement.propTypes = {
-  arcUtilityStatement: string.isRequired
+  arcUtilityStatement: object.isRequired
 };
 
 

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { fetchUtilityStatements } from "../session.js";
 import UtilityStatementElement from "./utility-statement-element.jsx";
-import { number } from 'prop-types';
+import { string } from 'prop-types';
 
 const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
   const [arcUtilityStatements, setArcUtilityStatements] = useState()
-  const [openModal, setOpenModal] = useState(false)
 
   const setUtilityStatements = async () => {
     const result = await fetchUtilityStatements(arcUtilityAccountId);
@@ -31,7 +30,7 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
 };
 
 UtilityStatementsDisplay.propTypes = {
-  arcUtilityAccountId: number.isRequired
+  arcUtilityAccountId: string.isRequired
 };
 
 

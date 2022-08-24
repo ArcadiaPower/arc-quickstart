@@ -1,6 +1,6 @@
 import { createGenabilityAccount } from "../session.js";
 import JSONPretty from 'react-json-pretty';
-import { func, string } from 'prop-types';
+import { func, string, object } from 'prop-types';
 
 const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabilityAccount, setGenabilityAccount}) => {
   const handleSubmit = async (e) => {
@@ -31,7 +31,7 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
 UtilityAccountForm.propTypes = {
   arcUtilityAccountId: string.isRequired,
   setArcUtilityAccountId: func.isRequired,
-  genabilityAccount:  string,
+  genabilityAccount: object,
   setGenabilityAccount: func.isRequired
 };
 
