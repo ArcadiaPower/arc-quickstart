@@ -150,3 +150,20 @@ export const createUsageProfileSolarData = async (
     headers: genabilityHeaders,
   });
 };
+
+export const calculateCurrentBillCost = async (
+  arcUtilityStatement
+) => {
+  const body = {
+    fromDateTime: arcUtilityStatement.serviceStartDate,
+    toDateTime: arcUtilityStatement.serviceEndDate,
+    billingPeriod: true,
+    minimums: false,
+    groupBy:"MONTH",
+    detailLevel:"CHARGE_TYPE"
+ }
+
+ await genabilityApi.post(`rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`, body, {
+  headers: genabilityHeaders
+ });
+}

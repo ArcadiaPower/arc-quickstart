@@ -10,6 +10,7 @@ import {
   createSwitchAccount,
   createTariff,
   createUsageProfileIntervalData,
+  calculateCurrentBillCost
 } from "./genability-client.js";
 dotenv.config();
 
@@ -57,7 +58,7 @@ app.get("/fetch_utility_statements", async (req, res) => {
 
 app.post("/calculate_counterfactual_bill", async (req, res) => {
   const { utilityStatementId } = req.query;
-  const arcUtilityStatement = getUtilityStatement(utilityStatementId);
+  const arcUtilityStatement = await getUtilityStatement(utilityStatementId);
 
   try {
     // Step 1: Post Tariff from current UtilityStatement. The genabilityAccountId is set as a Global variable.
@@ -71,6 +72,13 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     // Step 4: Update Solar Usage Profile
     await createUsageProfileSolarData(genabilityAccountId);
     // Step 5: Calculate Costs
+
+    const currentCost = await calculateCurrentBillCost(genabilityAccountId);
+
+    // step 6: calculate cost without solar
+
+    res.json({currentCost: currentCost, currentCostWithoutSolar: 'placeholder'});
+    res.status(200);
 
     res.status(200);
   } catch (error) {

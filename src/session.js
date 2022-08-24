@@ -22,11 +22,12 @@ export const fetchUtilityStatements = async (utilityAccountId) => {
 };
 
 export const calculateCounterfactualBill = async (utilityStatementId) => {
-  axios.post(
-    `${backend}/calculate_counterfactual_bill?`,
+  const response = await axios.post(
+    `${backend}/calculate_counterfactual_bill`,
     { utilityStatementId },
     {
       withCredentials: true,
     }
   );
+  return response.data
 };
