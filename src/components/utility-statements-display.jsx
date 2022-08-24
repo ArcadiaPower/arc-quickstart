@@ -19,10 +19,10 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
       <button onClick={setUtilityStatements}>
         Fetch Utility Statements for Utility Account {arcUtilityAccountId}
       </button>
-      {arcUtilityStatements && 
+      {arcUtilityStatements &&
         arcUtilityStatements.data.map(utilityStatement => {
           return(
-           <UtilityStatementElement arcUtilityStatement={utilityStatement}/>
+           <UtilityStatementElement key={utilityStatement.id} arcUtilityStatement={utilityStatement}/>
           )
         })
       }
