@@ -10,7 +10,6 @@ const UtilityStatementElement = ({arcUtilityStatement}) => {
   const calculate = async (arcUtilityStatementId) => {
     const result = await calculateCounterfactualBill(arcUtilityStatementId)
     setOpenModal(true)
-    console.log(result)
   }
 
   return (

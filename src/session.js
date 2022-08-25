@@ -21,13 +21,13 @@ export const fetchUtilityStatements = async (utilityAccountId) => {
   return response.data.utilityStatements;
 };
 
-export const calculateCounterfactualBill = async (utilityStatementId) => {
+export const calculateCounterfactualBill = async (arcUtilityStatementId) => {
   const response = await axios.post(
     `${backend}/calculate_counterfactual_bill`,
-    { utilityStatementId },
+    { utilityStatementId: arcUtilityStatementId },
     {
       withCredentials: true,
     }
   );
-  return response.data
+  return response.data;
 };

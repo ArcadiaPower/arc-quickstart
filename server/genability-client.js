@@ -60,47 +60,19 @@ export const createTariff = async (
     effectiveDate: arcUtilityStatement.serviceStartDate,
   };
 
-  await genabilityApi.post(
-    `rest/v1/accounts/${genabilityAccountId}/tariffs`,
-    body,
-    { headers: genabilityHeaders }
-  );
+  genabilityApi.post(`rest/v1/accounts/${genabilityAccountId}/tariffs`, body, {
+    headers: genabilityHeaders,
+  });
 };
-
-// If you do not have interval data, you can create a usage profile with statement data
-// export const createUsageProfileStatementData = async (
-//   genabilityAccountId,
-//   arcHistoricalUtilityStatements
-// ) => {
-//   const readingData = arcHistoricalUtilityStatements.map((utilityStatement) => {
-//     return {
-//       fromDateTime: utilityStatement.statementStartDate,
-//       toDateTime: utilityStatement.statementStartDate,
-//       quantityUnit: "kwh",
-//       quantityValue: utilityStatement.kwh,
-//     };
-//   });
-
-//   const body = {
-//     accountId: genabilityAccountId, // Can alternately provide the Genability accountId
-//     profileName: "Utility Statements",
-//     description: `Usage Profile using Utility Statements for User ${arcClientUserId}`,
-//     isDefault: true,
-//     serviceTypes: "ELECTRICITY",
-//     sourceId: "ReadingEntry",
-//     readingData: readingData,
-//   };
-
-//   const response = await genabilityApi.put(`rest/v1/profiles`, body, {
-//     headers: genabilityHeaders,
-//   });
-// };
 
 export const createUsageProfileIntervalData = async (
   genabilityAccountId,
   arcUtilityStatement
 ) => {
-  const intervalData = await getIntervalData(arcUtilityStatement);
+  const intervalData = await getIntervalData(
+    arcUtilityStatement.id,
+    arcUtilityStatement.utility_account_id //TODO: camelCase incoming responses
+  );
   const intervalInfoData = intervalData.map((interval) => {
     return {
       fromDateTime: interval.startTime,
@@ -113,14 +85,14 @@ export const createUsageProfileIntervalData = async (
   const body = {
     accountId: genabilityAccountId,
     profileName: "Interval Data",
-    description: `Usage Profile using Interval Data for Utility Account ${arcUtilityStatement.utilityAccountId}`,
+    description: `Usage Profile using Interval Data for Utility Account ${arcUtilityStatement.utility_account_id}`, //TODO: camelCase incoming responses
     isDefault: true,
     serviceTypes: "ELECTRICITY",
     sourceId: "ReadingEntry",
     intervals: intervalInfoData,
   };
 
-  await genabilityApi.put(`rest/v1/profiles`, body, {
+  genabilityApi.put(`rest/v1/profiles`, body, {
     headers: genabilityHeaders,
   });
 };
@@ -146,24 +118,26 @@ export const createUsageProfileSolarData = async (
     },
   };
 
-  await genabilityApi.put(`rest/v1/profiles`, body, {
+  genabilityApi.put(`rest/v1/profiles`, body, {
     headers: genabilityHeaders,
   });
 };
 
-export const calculateCurrentBillCost = async (
-  arcUtilityStatement
-) => {
+export const calculateCurrentBillCost = async (arcUtilityStatement) => {
   const body = {
     fromDateTime: arcUtilityStatement.serviceStartDate,
-    toDateTime: arcUtilityStatement.serviceEndDate,
+    toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
     billingPeriod: true,
     minimums: false,
-    groupBy:"MONTH",
-    detailLevel:"CHARGE_TYPE"
- }
+    groupBy: "MONTH",
+    detailLevel: "CHARGE_TYPE_AND_TOU",
+  };
 
- await genabilityApi.post(`rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`, body, {
-  headers: genabilityHeaders
- });
-}
+  await genabilityApi.post(
+    `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
+    body,
+    {
+      headers: genabilityHeaders,
+    }
+  );
+};

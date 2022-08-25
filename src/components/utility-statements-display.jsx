@@ -11,7 +11,6 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
     setArcUtilityStatements(result)
   };
 
-
   return (
     <div>
       <h3> Next, we will fetch the utility statements for the Arc Utility Account from Plug</h3>

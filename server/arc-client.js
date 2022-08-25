@@ -59,15 +59,17 @@ export const getUtilityStatement = async (utilityStatementId) => {
   return response.data;
 };
 
-export const getIntervalData = async (utilityStatment) => {
+export const getIntervalData = async (
+  arcUtilityStatementId,
+  arcUtilityAccountId
+) => {
   const accessToken = await getArcAccessToken();
   // TODO: query params for utility meter
   const response = await arcadiaApi.get(
-    `/plug/utility_intervals?utility_statement_id=${utilityStatement.id}`,
+    `/plug/utility_intervals?utility_statement_id=${arcUtilityStatementId}&utility_account_id=${arcUtilityAccountId}`,
     {
       headers: setArcHeaders(accessToken),
     }
   );
-
   return response.data;
 };
