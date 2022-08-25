@@ -87,7 +87,6 @@ export const createUsageProfileIntervalData = async (
     };
   });
 
-  console.log(intervalInfoData);
   const body = {
     accountId: genabilityAccountId,
     profileName: "Interval Data",
@@ -95,21 +94,17 @@ export const createUsageProfileIntervalData = async (
     isDefault: true,
     serviceTypes: "ELECTRICITY",
     sourceId: "ReadingEntry",
-    intervals: intervalInfoData,
+    readingData: intervalInfoData,
   };
 
-  try {
-    const result = await genabilityApi.put(`rest/v1/profiles`, body, {
-      headers: genabilityHeaders,
-    });
-    console.log(result);
-  } catch (error) {
-    console.log(error.response.data.status);
-  }
+  console.log("body!", body);
+
+  genabilityApi.put(`rest/v1/profiles`, body, {
+    headers: genabilityHeaders,
+  });
 };
 
 // // Used for each Billing Calculation
-// // TODO: WTF?
 export const createUsageProfileSolarData = async (
   genabilityAccountId,
   arcUtilityStatement

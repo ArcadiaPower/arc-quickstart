@@ -66,13 +66,10 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     // Step 1: Post Tariff from current UtilityStatement. The genabilityAccountId is set as a Global variable.
     await createTariff(genabilityAccountId, arcUtilityStatement);
     // Step 2: Update Interval Data Usage Profile
-    const usageProfile = await createUsageProfileIntervalData(
+    await createUsageProfileIntervalData(
       genabilityAccountId,
       arcUtilityStatement
     );
-
-    console.log(usageProfile);
-
     // Step 4: Update Solar Usage Profile
     // await createUsageProfileSolarData(genabilityAccountId);
     // Step 5: Calculate Costs
