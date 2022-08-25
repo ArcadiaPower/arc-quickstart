@@ -11,17 +11,16 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
     setArcUtilityStatements(result)
   };
 
-
   return (
     <div>
       <h3> Next, we will fetch the utility statements for the Arc Utility Account from Plug</h3>
       <button onClick={setUtilityStatements}>
         Fetch Utility Statements for Utility Account {arcUtilityAccountId}
       </button>
-      {arcUtilityStatements && 
+      {arcUtilityStatements &&
         arcUtilityStatements.data.map(utilityStatement => {
           return(
-           <UtilityStatementElement arcUtilityStatement={utilityStatement}/>
+           <UtilityStatementElement key={utilityStatement.id} arcUtilityStatement={utilityStatement}/>
           )
         })
       }
