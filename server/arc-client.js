@@ -71,5 +71,5 @@ export const getIntervalData = async (
       headers: setArcHeaders(accessToken),
     }
   );
-  return response.data;
+  return response.data.data;
 };

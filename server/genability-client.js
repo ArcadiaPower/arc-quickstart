@@ -48,6 +48,10 @@ export const createTariff = async (
   genabilityAccountId,
   arcUtilityStatement
 ) => {
+  if (!arcUtilityStatement.tariff) {
+    throw "This Utility Statement does not have a known tariff!";
+  }
+
   // The following will transform the tariff into the correct form for Genability e.g. gen_mtid_522 => 522
   const parsedTariffId = arcUtilityStatement.tariff.main_tariff_id.replace(
     "gen_mtid_",
@@ -73,15 +77,17 @@ export const createUsageProfileIntervalData = async (
     arcUtilityStatement.id,
     arcUtilityStatement.utility_account_id //TODO: camelCase incoming responses
   );
+
   const intervalInfoData = intervalData.map((interval) => {
     return {
-      fromDateTime: interval.startTime,
-      toDateTime: interval.endTime,
+      fromDateTime: interval.start_time, //TODO: camelCase incoming responses
+      toDateTime: interval.end_time, //TODO: camelCase incoming responses
       quantityUnit: "kwh",
       quantityValue: interval.kwh,
     };
   });
 
+  console.log(intervalInfoData);
   const body = {
     accountId: genabilityAccountId,
     profileName: "Interval Data",
@@ -92,52 +98,55 @@ export const createUsageProfileIntervalData = async (
     intervals: intervalInfoData,
   };
 
-  genabilityApi.put(`rest/v1/profiles`, body, {
-    headers: genabilityHeaders,
-  });
+  try {
+    const result = await genabilityApi.put(`rest/v1/profiles`, body, {
+      headers: genabilityHeaders,
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error.response.data.status);
+  }
 };
 
-// Used for each Billing Calculation
-// TODO: WTF?
+// // Used for each Billing Calculation
+// // TODO: WTF?
 export const createUsageProfileSolarData = async (
   genabilityAccountId,
   arcUtilityStatement
 ) => {
-  const body = {
-    accountId: genabilityAccountId,
-    profileName: "Interval Data",
-    description: `Usage Profile using Solar Data for Utility Account ${arcUtilityStatement.utilityAccountId}`,
-    isDefault: true,
-    serviceTypes: "SOLAR_PV",
-    sourceId: "SolarPvModel",
-    properties: {
-      systemSize: {
-        keyName: "systemSize",
-        dataValue: 5,
-      },
-    },
-  };
-
-  genabilityApi.put(`rest/v1/profiles`, body, {
-    headers: genabilityHeaders,
-  });
+  //   const body = {
+  //     accountId: genabilityAccountId,
+  //     profileName: "Interval Data",
+  //     description: `Usage Profile using Solar Data for Utility Account ${arcUtilityStatement.utilityAccountId}`,
+  //     isDefault: true,
+  //     serviceTypes: "SOLAR_PV",
+  //     sourceId: "SolarPvModel",
+  //     properties: {
+  //       systemSize: {
+  //         keyName: "systemSize",
+  //         dataValue: 5,
+  //       },
+  //     },
+  //   };
+  //   genabilityApi.put(`rest/v1/profiles`, body, {
+  //     headers: genabilityHeaders,
+  //   });
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement) => {
-  const body = {
-    fromDateTime: arcUtilityStatement.serviceStartDate,
-    toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
-    billingPeriod: true,
-    minimums: false,
-    groupBy: "MONTH",
-    detailLevel: "CHARGE_TYPE_AND_TOU",
-  };
-
-  await genabilityApi.post(
-    `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
-    body,
-    {
-      headers: genabilityHeaders,
-    }
-  );
+  //   const body = {
+  //     fromDateTime: arcUtilityStatement.serviceStartDate,
+  //     toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
+  //     billingPeriod: true,
+  //     minimums: false,
+  //     groupBy: "MONTH",
+  //     detailLevel: "CHARGE_TYPE_AND_TOU",
+  //   };
+  //   await genabilityApi.post(
+  //     `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
+  //     body,
+  //     {
+  //       headers: genabilityHeaders,
+  //     }
+  //   );
 };
