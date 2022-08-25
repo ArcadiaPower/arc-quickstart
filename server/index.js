@@ -10,6 +10,7 @@ import {
   createSwitchAccount,
   createTariff,
   createUsageProfileIntervalData,
+  createUsageProfileSolarData,
   calculateCurrentBillCost,
 } from "./genability-client.js";
 dotenv.config();
@@ -71,7 +72,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
       arcUtilityStatement
     );
     // Step 4: Update Solar Usage Profile
-    // await createUsageProfileSolarData(genabilityAccountId);
+    await createUsageProfileSolarData(genabilityAccountId);
     // Step 5: Calculate Costs
     // const currentCost = await calculateCurrentBillCost(genabilityAccountId);
     // step 6: calculate cost without solar
@@ -82,7 +83,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     // });
     res.status(200);
   } catch (error) {
-    console.log("oh no we encountered an error!", error); // TODO: parse HTTP errors if they exists error.response.data.error
+    console.log("oh no we encountered an error!", error.response.data); // TODO: parse HTTP errors if they exists error.response.data.error
   }
 });
 

@@ -97,35 +97,49 @@ export const createUsageProfileIntervalData = async (
     readingData: intervalInfoData,
   };
 
-  console.log("body!", body);
-
   genabilityApi.put(`rest/v1/profiles`, body, {
     headers: genabilityHeaders,
   });
 };
 
 // // Used for each Billing Calculation
-export const createUsageProfileSolarData = async (
-  genabilityAccountId,
-  arcUtilityStatement
-) => {
-  //   const body = {
-  //     accountId: genabilityAccountId,
-  //     profileName: "Interval Data",
-  //     description: `Usage Profile using Solar Data for Utility Account ${arcUtilityStatement.utilityAccountId}`,
-  //     isDefault: true,
-  //     serviceTypes: "SOLAR_PV",
-  //     sourceId: "SolarPvModel",
-  //     properties: {
-  //       systemSize: {
-  //         keyName: "systemSize",
-  //         dataValue: 5,
-  //       },
-  //     },
-  //   };
-  //   genabilityApi.put(`rest/v1/profiles`, body, {
-  //     headers: genabilityHeaders,
-  //   });
+export const createUsageProfileSolarData = async (genabilityAccountId) => {
+  const body = {
+    providerAccountId: "gdn-fst-eg-01",
+    providerProfileId: "gdn-fst-eg-01-pvwatts",
+    groupBy: "YEAR",
+    serviceTypes: "SOLAR_PV",
+    source: {
+      sourceId: "PVWatts",
+      sourceVersion: "5",
+    },
+    properties: {
+      systemSize: {
+        keyName: "systemSize",
+        dataValue: "3",
+      },
+      azimuth: {
+        keyName: "azimuth",
+        dataValue: "180",
+      },
+      losses: {
+        keyName: "losses",
+        dataValue: "15",
+      },
+      inverterEfficiency: {
+        keyName: "inverterEfficiency",
+        dataValue: "96",
+      },
+      tilt: {
+        keyName: "tilt",
+        dataValue: "20",
+      },
+    },
+  };
+  const result = await genabilityApi.put(`rest/v1/profiles`, body, {
+    headers: genabilityHeaders,
+  });
+  console.log(result);
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement) => {
