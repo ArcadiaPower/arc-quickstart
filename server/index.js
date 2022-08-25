@@ -83,7 +83,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     // });
     res.status(200);
   } catch (error) {
-    console.log("oh no we encountered an error!", error.response.data); // TODO: parse HTTP errors if they exists error.response.data.error
+    console.log("oh no we encountered an error!", error); // TODO: parse HTTP errors if they exists error.response.data.error
   }
 });
 
