@@ -13,7 +13,7 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
   // Clear the current Genability Account if the user re-enters a arcUtilityAccountId
   useEffect(() => {
     setGenabilityAccount(null)
-  }, [arcUtilityAccountId]);
+  }, [arcUtilityAccountId, setGenabilityAccount]);
 
   return (
     <div>

@@ -15,6 +15,8 @@ const customStyles = {
   },
 };
 
+Modal.setAppElement(document.getElementById('root'));
+
 const UtilityStatementElement = ({arcUtilityStatement}) => {
   const [openModal, setOpenModal] = useState(false)
 
@@ -33,7 +35,7 @@ const UtilityStatementElement = ({arcUtilityStatement}) => {
       <button onClick={() => calculate(arcUtilityStatement.id)}>
         Calculate Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}
       </button>
-      <Modal isOpen={openModal} style={customStyles}>
+      <Modal isOpen={openModal} style={customStyles} appElement={document.getElementById('app')}>
         <p> We will display the results here if the exist and present loading if they are loading</p>
         <button onClick={closeModal}>close</button>
       </Modal>
