@@ -1,10 +1,17 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { env } from "process";
+import humps from 'humps';
 dotenv.config();
 
 const arcadiaApi = axios.create({
   baseURL: "https://api.arcadia.com",
+});
+
+// Axios middleware to convert all api responses to camelCase
+arcadiaApi.interceptors.response.use((response) => {
+  if (response.data) response.data = humps.camelizeKeys(response.data);
+  return response;
 });
 
 const getArcAccessToken = async () => {
@@ -13,7 +20,7 @@ const getArcAccessToken = async () => {
     client_secret: env["ARC_API_CLIENT_SECRET"],
   });
 
-  return tokenResponse.data.access_token;
+  return tokenResponse.data.accessToken;
 };
 
 const setArcHeaders = (token) => ({

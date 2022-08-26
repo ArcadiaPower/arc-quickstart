@@ -53,7 +53,7 @@ export const createTariff = async (
   }
 
   // The following will transform the tariff into the correct form for Genability e.g. gen_mtid_522 => 522
-  const parsedTariffId = arcUtilityStatement.tariff.main_tariff_id.replace(
+  const parsedTariffId = arcUtilityStatement.tariff.mainTariffId.replace(
     "gen_mtid_",
     ""
   );
@@ -75,13 +75,13 @@ export const createUsageProfileIntervalData = async (
 ) => {
   const intervalData = await getIntervalData(
     arcUtilityStatement.id,
-    arcUtilityStatement.utility_account_id //TODO: camelCase incoming responses
+    arcUtilityStatement.utilityAccountId
   );
 
   const intervalInfoData = intervalData.map((interval) => {
     return {
-      fromDateTime: interval.start_time, //TODO: camelCase incoming responses
-      toDateTime: interval.end_time, //TODO: camelCase incoming responses
+      fromDateTime: interval.startTime,
+      toDateTime: interval.endTime,
       quantityUnit: "kwh",
       quantityValue: interval.kwh,
     };
@@ -90,7 +90,7 @@ export const createUsageProfileIntervalData = async (
   const body = {
     accountId: genabilityAccountId,
     profileName: "Interval Data",
-    description: `Usage Profile using Interval Data for Utility Account ${arcUtilityStatement.utility_account_id}`, //TODO: camelCase incoming responses
+    description: `Usage Profile using Interval Data for Utility Account ${arcUtilityStatement.utilityAccountId}`,
     isDefault: true,
     serviceTypes: "ELECTRICITY",
     sourceId: "ReadingEntry",
