@@ -3,7 +3,6 @@ import JSONPretty from 'react-json-pretty';
 import { calculateCounterfactualBill } from "../session.js";
 import { object } from 'prop-types';
 import Modal from 'react-modal';
-import CalculationModal from './calculation-modal.jsx'
 
 const customStyles = {
   content: {
