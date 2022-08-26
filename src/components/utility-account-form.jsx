@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { createGenabilityAccount } from "../session.js";
 import JSONPretty from 'react-json-pretty';
 import { func, string, object } from 'prop-types';
@@ -8,6 +9,11 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
     const result = await createGenabilityAccount(arcUtilityAccountId);
     setGenabilityAccount(result)
   };
+
+  // Clear the current Genability Account if the user re-enters a arcUtilityAccountId
+  useEffect(() => {
+    setGenabilityAccount(null)
+  }, [arcUtilityAccountId, setGenabilityAccount]);
 
   return (
     <div>
