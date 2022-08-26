@@ -10,7 +10,7 @@ import {
   createSwitchAccount,
   createTariff,
   createUsageProfileIntervalData,
-  createUsageProfileSolarData,
+  createProductionProfileSolarData,
   calculateCurrentBillCost,
 } from "./genability-client.js";
 dotenv.config();
@@ -29,6 +29,7 @@ app.use(cors(corsOptions));
 
 // In this contrived example, use this global var to keep track of the genabilityAccountId
 let genabilityAccountId = null;
+let genabilityProviderAccountId = null;
 
 app.post("/create_genability_account", async (req, res) => {
   const { utilityAccountId } = req.body;
@@ -36,6 +37,7 @@ app.post("/create_genability_account", async (req, res) => {
     const arcUtilityAccount = await getUtilityAccount(utilityAccountId);
     const genabilityAccount = await createSwitchAccount(arcUtilityAccount);
     genabilityAccountId = genabilityAccount.accountId;
+    genabilityProviderAccountId = genabilityAccount.providerAccountId;
 
     res.json({ genabilityAccount });
     res.status(200);
@@ -71,8 +73,8 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
       genabilityAccountId,
       arcUtilityStatement
     );
-    // Step 4: Update Solar Usage Profile
-    await createUsageProfileSolarData(genabilityAccountId);
+    // Step 4: Create/Update Solar Usage Profile
+    await createProductionProfileSolarData(genabilityProviderAccountId);
     // Step 5: Calculate Costs
     // const currentCost = await calculateCurrentBillCost(genabilityAccountId);
     // step 6: calculate cost without solar
@@ -84,6 +86,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     res.status(200);
   } catch (error) {
     console.log("oh no we encountered an error!", error); // TODO: parse HTTP errors if they exists error.response.data.error
+    console.log('error parsed', error.response.data)
   }
 });
 
