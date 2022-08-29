@@ -1,7 +1,14 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import dayjs from "dayjs";
 import { env } from "process";
 import { getIntervalData } from "./arc-client.js";
+import { readFile } from 'fs/promises';
+const mock8760Data = JSON.parse(
+  await readFile(
+    new URL('./assets/mock-8760-solar-profile.json', import.meta.url)
+  )
+);
 dotenv.config();
 
 const genabilityApi = axios.create({
@@ -102,62 +109,37 @@ export const createUsageProfileIntervalData = async (
   });
 };
 
-// // Used for each Billing Calculation
+export const getAndTransform8760Data = (startDateTime) => {
+  let currentDateTime = dayjs(startDateTime);
+  const baselineMeasures = mock8760Data.results[0].baselineMeasures;
+  return baselineMeasures.map(row => {
+    const startTime = currentDateTime;
+    const endTime = currentDateTime.add(1, 'hour')
+    const transformedRow = {
+      fromDateTime: startTime.toISOString(),
+      toDateTime: endTime.toISOString(),
+      quantityUnit: "kWh",
+      quantityValue: row.v.toString()
+    }
+    currentDateTime = endTime
+    return transformedRow;
+  })
+}
 
 export const createProductionProfileSolarData = async (genabilityProviderAccountId) => {
   const body = {
-    providerAccountId : genabilityProviderAccountId,
-    providerProfileId: 'PVWATTS_5kW', // this is what allows the upsert
-    profileName : "Solar System Actual Production",
+    providerAccountId: genabilityProviderAccountId,
+    providerProfileId: 'PVWATTS_5kW',
+    profileName: "Solar System Actual Production",
     serviceTypes: "SOLAR_PV",
-    sourceId : "ReadingEntry",
-    properties : {
-     systemSize : {
-       keyName : "systemSize",
-       dataValue : "5"
-     }},
-     readingData : [
-        { fromDateTime : "2015-06-01T09:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "2.15",
-          toDateTime : "2015-06-01T10:00-0700"
-        },
-        { fromDateTime : "2015-06-01T10:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "3.64",
-          toDateTime : "2015-06-01T11:00-0700"
-        },
-        { fromDateTime : "2015-06-01T11:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "4.98",
-          toDateTime : "2015-06-01T12:00-0700"
-        },
-        { fromDateTime : "2015-06-01T12:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "5.67",
-          toDateTime : "2015-06-01T13:00-0700"
-        },
-        { fromDateTime : "2015-06-01T13:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "5.13",
-          toDateTime : "2015-06-01T14:00-0700"
-        },
-        { fromDateTime : "2015-06-01T14:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "5.96",
-          toDateTime : "2015-06-01T15:00-0700"
-        },
-        { fromDateTime : "2015-06-01T15:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "4.32",
-          toDateTime : "2015-06-01T16:00-0700"
-        },
-        { fromDateTime : "2015-06-01T16:00-0700",
-          quantityUnit : "kWh",
-          quantityValue : "1.02",
-          toDateTime : "2015-06-01T17:00-0700"
-        },
-      ]
+    sourceId: "ReadingEntry",
+    properties: {
+      systemSize: {
+        keyName: "systemSize",
+        dataValue: "5"
+      }
+    },
+    readingData: getAndTransform8760Data("2022-01-01T00:00-0700")
   }
 
   // https://www.switchsolar.io/api-reference/account-api/usage-profile/#example-5---upload-a-solar-profile-with-baselinemeasure-data
@@ -168,7 +150,7 @@ export const createProductionProfileSolarData = async (genabilityProviderAccount
     headers: genabilityHeaders
   })
 
-  console.log('new solar propro: ', result.data)
+  console.log('new or updated solar production profile: ', result.data)
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement) => {
