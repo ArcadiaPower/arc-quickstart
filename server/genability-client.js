@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import dayjs from "dayjs";
 import { env } from "process";
 import { getIntervalData } from "./arc-client.js";
+
+// This is mock solar production data and should be substituted
+// for real solar production data in a a production implmentation.
 import { readFile } from 'fs/promises';
 const mock8760Data = JSON.parse(
   await readFile(
@@ -110,6 +113,11 @@ export const createUsageProfileIntervalData = async (
 };
 
 export const getAndTransform8760Data = (startDateTime) => {
+  // In this example, we're initializing/updating the solar data production profile
+  // with an entire year's worth of mock production data. With real data, a developer
+  // may only be updating the solar data production profile with the current statement
+  // period's solar production data.
+
   let currentDateTime = dayjs(startDateTime);
   const baselineMeasures = mock8760Data.results[0].baselineMeasures;
   return baselineMeasures.map(row => {
@@ -126,9 +134,13 @@ export const getAndTransform8760Data = (startDateTime) => {
   })
 }
 
-export const createProductionProfileSolarData = async (genabilityProviderAccountId) => {
+export const createProductionProfileSolarData = async (genabilityAccountId) => {
+  // This will add a new profile (if one with this providerProfileId doesn’t exist)
+  // and at the same time also add the readings included in the request.
+  // See https://www.switchsolar.io/api-reference/account-api/usage-profile/#example-5---upload-a-solar-profile-with-baselinemeasure-data for more detail.
+
   const body = {
-    providerAccountId: genabilityProviderAccountId,
+    accountId: genabilityAccountId,
     providerProfileId: 'PVWATTS_5kW',
     profileName: "Solar System Actual Production",
     serviceTypes: "SOLAR_PV",
@@ -141,10 +153,6 @@ export const createProductionProfileSolarData = async (genabilityProviderAccount
     },
     readingData: getAndTransform8760Data("2022-01-01T00:00-0700")
   }
-
-  // https://www.switchsolar.io/api-reference/account-api/usage-profile/#example-5---upload-a-solar-profile-with-baselinemeasure-data
-  // This will add a new profile (if one with this providerProfileId doesn’t exist)
-  // and at the same time also add the readings included in the request.
 
   const result = await genabilityApi.put(`/rest/v1/profiles`, body, {
     headers: genabilityHeaders
