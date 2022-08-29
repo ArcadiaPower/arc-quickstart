@@ -1,7 +1,17 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import dayjs from "dayjs";
 import { env } from "process";
 import { getIntervalData } from "./arc-client.js";
+
+// This is mock solar production data and should be substituted
+// for real solar production data in a a production implmentation.
+import { readFile } from 'fs/promises';
+const mock8760Data = JSON.parse(
+  await readFile(
+    new URL('./assets/mock-8760-solar-profile.json', import.meta.url)
+  )
+);
 dotenv.config();
 
 const genabilityApi = axios.create({
@@ -102,44 +112,51 @@ export const createUsageProfileIntervalData = async (
   });
 };
 
-// // Used for each Billing Calculation
-export const createUsageProfileSolarData = async (genabilityAccountId) => {
+export const getAndTransform8760Data = (startDateTime) => {
+  // In this example, we're initializing/updating the solar data production profile
+  // with an entire year's worth of mock production data. With real data, a developer
+  // may only be updating the solar data production profile with the current statement
+  // period's solar production data.
+
+  let currentDateTime = dayjs(startDateTime);
+  const baselineMeasures = mock8760Data.results[0].baselineMeasures;
+  return baselineMeasures.map(row => {
+    const startTime = currentDateTime;
+    const endTime = currentDateTime.add(1, 'hour')
+    const transformedRow = {
+      fromDateTime: startTime.toISOString(),
+      toDateTime: endTime.toISOString(),
+      quantityUnit: "kWh",
+      quantityValue: row.v.toString()
+    }
+    currentDateTime = endTime
+    return transformedRow;
+  })
+}
+
+export const createProductionProfileSolarData = async (genabilityAccountId) => {
+  // This will add a new profile (if one with this providerProfileId doesn’t exist)
+  // and at the same time also add the readings included in the request.
+  // See https://www.switchsolar.io/api-reference/account-api/usage-profile/#example-5---upload-a-solar-profile-with-baselinemeasure-data for more detail.
+
   const body = {
-    providerAccountId: "gdn-fst-eg-01",
-    providerProfileId: "gdn-fst-eg-01-pvwatts",
-    groupBy: "YEAR",
+    accountId: genabilityAccountId,
+    providerProfileId: 'PVWATTS_5kW',
+    profileName: "Solar System Actual Production",
     serviceTypes: "SOLAR_PV",
-    source: {
-      sourceId: "PVWatts",
-      sourceVersion: "5",
-    },
+    sourceId: "ReadingEntry",
     properties: {
       systemSize: {
         keyName: "systemSize",
-        dataValue: "3",
-      },
-      azimuth: {
-        keyName: "azimuth",
-        dataValue: "180",
-      },
-      losses: {
-        keyName: "losses",
-        dataValue: "15",
-      },
-      inverterEfficiency: {
-        keyName: "inverterEfficiency",
-        dataValue: "96",
-      },
-      tilt: {
-        keyName: "tilt",
-        dataValue: "20",
-      },
+        dataValue: "5"
+      }
     },
-  };
-  const result = await genabilityApi.put(`rest/v1/profiles`, body, {
-    headers: genabilityHeaders,
-  });
-  console.log(result);
+    readingData: getAndTransform8760Data("2022-01-01T00:00-0700")
+  }
+
+  await genabilityApi.put(`/rest/v1/profiles`, body, {
+    headers: genabilityHeaders
+  })
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement) => {
