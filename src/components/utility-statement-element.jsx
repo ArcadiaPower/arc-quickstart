@@ -15,6 +15,16 @@ const customStyles = {
   },
 };
 
+const resultStyle = {
+  width: "50%",
+  overflow: "hidden"
+}
+
+const containerStyle = {
+  display: "flex",
+  gap: '20px'
+}
+
 Modal.setAppElement(document.getElementById('root'));
 
 const UtilityStatementElement = ({ arcUtilityStatement }) => {
@@ -37,15 +47,24 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
       <button onClick={() => calculate(arcUtilityStatement.id)}>
         Calculate Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}
       </button>
-      <Modal isOpen={openModal} style={customStyles} appElement={document.getElementById('app')}>
-        <p> We will display the results here if the exist and present loading if they are loading</p>
-        {counterFactualResults &&
-          <>
-            <p>Current Total Cost: {counterFactualResults.currentCost.totalCost}</p>
-            <p>Total Cost w/o Solar: {counterFactualResults.currentCostWithoutSolar.totalCost}</p>
-          </>
-        }
+      <Modal isOpen={openModal} appElement={document.getElementById('app')}>
         <button onClick={closeModal}>close</button>
+        <>
+          {
+            counterFactualResults ? <div style={containerStyle}>
+            <div style={resultStyle}>
+              Current Cost:
+              <JSONPretty stringStyle='white-space: normal' data={counterFactualResults.currentCost}></JSONPretty>
+            </div>
+            <div style={resultStyle}>
+              Current Cost Without Solar:
+              <JSONPretty stringStyle='white-space: normal' data={counterFactualResults.currentCostWithoutSolar}></JSONPretty>
+            </div>
+          </div>
+            : <p>Loading...</p>
+
+          }
+        </>
       </Modal>
     </div>
   )
