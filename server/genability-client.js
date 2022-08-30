@@ -68,14 +68,11 @@ export const createTariff = async (
     ""
   );
 
-  // DELETE /rest/v1/accounts/{accountId}/tariffs?effectiveDate={effectiveDate}
-  // const result = await genabilityApi.delete(`rest/v1/accounts/${genabilityAccountId}/tariffs?effectiveDate=${arcUtilityStatement.serviceStartDate}`, {
-  //   headers: genabilityHeaders
-  // })
   const body = {
     masterTariffId: parsedTariffId,
     serviceType: "ELECTRICITY",
     effectiveDate: arcUtilityStatement.serviceStartDate,
+    endDate: arcUtilityStatement.serviceEndDate,
   };
 
   const result = await genabilityApi.put(`rest/v1/accounts/${genabilityAccountId}/tariffs`, body, {
@@ -166,6 +163,8 @@ export const createProductionProfileSolarData = async (genabilityAccountId) => {
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement, genabilityAccountId) => {
+  console.log('utStatement: ', arcUtilityStatement)
+  console.log('genability acc:', genabilityAccountId)
     const body = {
       fromDateTime: arcUtilityStatement.serviceStartDate,
       toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
