@@ -157,7 +157,7 @@ export const createProductionProfileSolarData = async (genabilityAccountId) => {
     readingData: getAndTransform8760Data("2022-01-01T00:00-0700")
   }
 
-  genabilityApi.put(`/rest/v1/profiles`, body, {
+  const response = await genabilityApi.put(`/rest/v1/profiles`, body, {
     headers: genabilityHeaders
   })
 
@@ -180,7 +180,7 @@ export const calculateCurrentBillCost = async (arcUtilityStatement, genabilityAc
       headers: genabilityHeaders,
     }
   );
-  return response
+  return response.data
 };
 
 export const calculateCurrentBillCostWithoutSolar = async (arcUtilityStatement, genabilityAccountId, solarProductionProfile) => {
