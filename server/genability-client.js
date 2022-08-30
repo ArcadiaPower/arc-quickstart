@@ -72,11 +72,14 @@ export const createTariff = async (
     masterTariffId: parsedTariffId,
     serviceType: "ELECTRICITY",
     effectiveDate: arcUtilityStatement.serviceStartDate,
+    endDate: arcUtilityStatement.serviceEndDate,
   };
 
-  genabilityApi.post(`rest/v1/accounts/${genabilityAccountId}/tariffs`, body, {
+  const result = await genabilityApi.put(`rest/v1/accounts/${genabilityAccountId}/tariffs`, body, {
     headers: genabilityHeaders,
   });
+
+  return result
 };
 
 export const createUsageProfileIntervalData = async (
@@ -154,25 +157,58 @@ export const createProductionProfileSolarData = async (genabilityAccountId) => {
     readingData: getAndTransform8760Data("2022-01-01T00:00-0700")
   }
 
-  await genabilityApi.put(`/rest/v1/profiles`, body, {
+  const response = await genabilityApi.put(`/rest/v1/profiles`, body, {
     headers: genabilityHeaders
   })
+
+  return response.data
 };
 
 export const calculateCurrentBillCost = async (arcUtilityStatement) => {
-  //   const body = {
-  //     fromDateTime: arcUtilityStatement.serviceStartDate,
-  //     toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
-  //     billingPeriod: true,
-  //     minimums: false,
-  //     groupBy: "MONTH",
-  //     detailLevel: "CHARGE_TYPE_AND_TOU",
-  //   };
-  //   await genabilityApi.post(
-  //     `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
-  //     body,
-  //     {
-  //       headers: genabilityHeaders,
-  //     }
-  //   );
+  const body = {
+    fromDateTime: arcUtilityStatement.serviceStartDate,
+    toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
+    billingPeriod: true,
+    minimums: false,
+    groupBy: "MONTH",
+    detailLevel: "CHARGE_TYPE_AND_TOU"
+  };
+  const response = await genabilityApi.post(
+    `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
+    body,
+    {
+      headers: genabilityHeaders,
+    }
+  );
+  return response.data
 };
+
+export const calculateCurrentBillCostWithoutSolar = async (arcUtilityStatement, solarProductionProfile) => {
+  // https://www.switchsolar.io/tutorials/actuals/electricity-savings/
+
+  const body = {
+    fromDateTime: arcUtilityStatement.serviceStartDate,
+    toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
+    billingPeriod: true,
+    minimums: false,
+    groupBy: "MONTH",
+    detailLevel: "CHARGE_TYPE",
+    propertyInputs: [
+      {
+        keyName: "profileId",
+        dataValue: solarProductionProfile.results[0].profileId,
+        operator: "+"
+      }
+    ]
+  }
+
+  const response = await genabilityApi.post(
+    `rest/v1/accounts/pid/${arcUtilityStatement.utilityAccountId}/calculate/`,
+    body,
+    {
+      headers: genabilityHeaders,
+    }
+  );
+
+  return response.data
+}

@@ -17,12 +17,14 @@ const customStyles = {
 
 Modal.setAppElement(document.getElementById('root'));
 
-const UtilityStatementElement = ({arcUtilityStatement}) => {
+const UtilityStatementElement = ({ arcUtilityStatement }) => {
   const [openModal, setOpenModal] = useState(false)
+  const [counterFactualResults, setCounterFactualResults] = useState()
 
   const calculate = async (arcUtilityStatementId) => {
     setOpenModal(true)
     const result = await calculateCounterfactualBill(arcUtilityStatementId)
+    setCounterFactualResults(result)
   }
 
   const closeModal = () => {
@@ -37,6 +39,12 @@ const UtilityStatementElement = ({arcUtilityStatement}) => {
       </button>
       <Modal isOpen={openModal} style={customStyles} appElement={document.getElementById('app')}>
         <p> We will display the results here if the exist and present loading if they are loading</p>
+        {counterFactualResults &&
+          <>
+            <p>Current Total Cost: {counterFactualResults.currentCost.totalCost}</p>
+            <p>Total Cost w/o Solar: {counterFactualResults.currentCostWithoutSolar.totalCost}</p>
+          </>
+        }
         <button onClick={closeModal}>close</button>
       </Modal>
     </div>
