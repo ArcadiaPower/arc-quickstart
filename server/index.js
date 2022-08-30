@@ -79,7 +79,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     const currentCost = await calculateCurrentBillCost(arcUtilityStatement, genabilityAccountId);
 
     // Step 6: calculate cost without solar
-    const currentCostWithoutSolar = await calculateCurrentBillCostWithoutSolar(arcUtilityStatement, genabilityAccountId, solarProductionProfile)
+    const currentCostWithoutSolar = await calculateCurrentBillCostWithoutSolar(arcUtilityStatement, solarProductionProfile)
 
     res.json({
       currentCost: currentCost.results[0],

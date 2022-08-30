@@ -164,7 +164,7 @@ export const createProductionProfileSolarData = async (genabilityAccountId) => {
   return response.data
 };
 
-export const calculateCurrentBillCost = async (arcUtilityStatement, genabilityAccountId) => {
+export const calculateCurrentBillCost = async (arcUtilityStatement) => {
   const body = {
     fromDateTime: arcUtilityStatement.serviceStartDate,
     toDateTime: arcUtilityStatement.serviceEndDate, //TODO: this should be inclusive of the end date for MOST utilities (add +1.day).
@@ -183,7 +183,7 @@ export const calculateCurrentBillCost = async (arcUtilityStatement, genabilityAc
   return response.data
 };
 
-export const calculateCurrentBillCostWithoutSolar = async (arcUtilityStatement, genabilityAccountId, solarProductionProfile) => {
+export const calculateCurrentBillCostWithoutSolar = async (arcUtilityStatement, solarProductionProfile) => {
   // https://www.switchsolar.io/tutorials/actuals/electricity-savings/
 
   const body = {
