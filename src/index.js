@@ -4,7 +4,7 @@ import App from "./components/app.jsx";
 
 ReactDOM.render(
   <React.StrictMode>
-    <h1> Hello Cruel World </h1>
+    <h1> Counterfactual Bill Calculation Quickstart </h1>
     <App />
   </React.StrictMode>,
   document.getElementById("root")
