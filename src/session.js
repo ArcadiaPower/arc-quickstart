@@ -3,13 +3,16 @@ import axios from "axios";
 const backend = "http://localhost:3010";
 
 export const createGenabilityAccount = async (utilityAccountId) => {
-  const response = await axios.post(
-    `${backend}/create_genability_account`,
-    { utilityAccountId },
-    { withCredentials: true }
-  );
-
-  return response.data.genabilityAccount;
+  try {
+    const response = await axios.post(
+      `${backend}/create_genability_account`,
+      { utilityAccountId },
+      { withCredentials: true }
+    );
+    return response.data.genabilityAccount;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const fetchUtilityStatements = async (utilityAccountId) => {

@@ -41,7 +41,11 @@ app.post("/create_genability_account", async (req, res) => {
     res.json({ genabilityAccount });
     res.status(200);
   } catch (error) {
-    console.log(error);
+    if (error.response) {
+      res.status(error.response.status).send(error.response.data);
+    } else {
+      res.sendStatus(500);
+    }
   }
 });
 
