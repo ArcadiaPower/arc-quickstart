@@ -11,7 +11,7 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
       setGenabilityAccount(result)
     } catch (error) {
       console.log(error)
-      setError(error)
+      setError(error.response)
     }
   };
 

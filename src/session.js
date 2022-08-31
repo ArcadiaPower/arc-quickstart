@@ -16,12 +16,16 @@ export const createGenabilityAccount = async (utilityAccountId) => {
 };
 
 export const fetchUtilityStatements = async (utilityAccountId) => {
-  const response = await axios.get(
-    `${backend}/fetch_utility_statements?utilityAccountId=${utilityAccountId}`,
-    { withCredentials: true }
-  );
+  try {
+    const response = await axios.get(
+      `${backend}/fetch_utility_statements?utilityAccountId=${utilityAccountId}`,
+      { withCredentials: true }
+    );
 
-  return response.data.utilityStatements;
+    return response.data.utilityStatements;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const calculateCounterfactualBill = async (arcUtilityStatementId) => {

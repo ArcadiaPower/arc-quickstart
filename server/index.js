@@ -58,7 +58,12 @@ app.get("/fetch_utility_statements", async (req, res) => {
     res.json({ utilityStatements: arcUtilityStatements });
     res.status(200);
   } catch (error) {
-    console.log(error);
+    if (error.response) {
+      console.log(error)
+      res.status(error.response.status).send(error.response.data);
+    } else {
+      res.sendStatus(500);
+    }
   }
 });
 
