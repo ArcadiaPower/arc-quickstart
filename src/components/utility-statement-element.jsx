@@ -1,28 +1,19 @@
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { calculateCounterfactualBill } from "../session.js";
+import CounterfactualResults from './counterfactual-results.jsx';
 import { object } from 'prop-types';
 import Modal from 'react-modal';
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
-
-const resultStyle = {
-  width: "50%",
-  overflow: "hidden"
-}
-
 const containerStyle = {
   display: "flex",
-  gap: '20px'
+  gap: '20px',
+}
+
+const titleStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: 'center'
 }
 
 Modal.setAppElement(document.getElementById('root'));
@@ -48,21 +39,17 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
         Calculate Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}
       </button>
       <Modal isOpen={openModal} appElement={document.getElementById('app')}>
-        <button onClick={closeModal}>close</button>
+        <div style={titleStyle}>
+          <h3>Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}</h3>
+          <button onClick={closeModal}>close</button>
+        </div>
         <>
           {
             counterFactualResults ? <div style={containerStyle}>
-            <div style={resultStyle}>
-              Current Cost:
-              <JSONPretty stringStyle='white-space: normal' data={counterFactualResults.currentCost}></JSONPretty>
+              <CounterfactualResults title="Current Cost" results={counterFactualResults.currentCost}></CounterfactualResults>
+              <CounterfactualResults title="Current Cost Without Solar" results={counterFactualResults.currentCostWithoutSolar}></CounterfactualResults>
             </div>
-            <div style={resultStyle}>
-              Current Cost Without Solar:
-              <JSONPretty stringStyle='white-space: normal' data={counterFactualResults.currentCostWithoutSolar}></JSONPretty>
-            </div>
-          </div>
-            : <p>Loading...</p>
-
+              : <p>Loading...</p>
           }
         </>
       </Modal>
