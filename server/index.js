@@ -96,8 +96,16 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     });
     res.status(200);
   } catch (error) {
-    console.log("oh no we encountered an error!", error); // TODO: parse HTTP errors if they exists error.response.data.error
-    console.log('error parsed', error.response.data)
+    if (error.response) {
+      console.log(error)
+      res.status(error.response.status).send(error.response.data);
+    } else if (error.message) {
+      console.log(error);
+      res.status(500).send(error.message)
+    }
+    else {
+      res.sendStatus(500);
+    }
   }
 });
 

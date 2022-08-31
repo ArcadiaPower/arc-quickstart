@@ -21,7 +21,7 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId, setError, error}) => {
   useEffect(() => {
     setArcUtilityStatements(null)
     setError(null)
-  }, [arcUtilityAccountId]);
+  }, [arcUtilityAccountId, setError]);
 
   return (
     <div>

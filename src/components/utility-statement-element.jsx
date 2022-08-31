@@ -21,15 +21,21 @@ Modal.setAppElement(document.getElementById('root'));
 const UtilityStatementElement = ({ arcUtilityStatement }) => {
   const [openModal, setOpenModal] = useState(false)
   const [counterFactualResults, setCounterFactualResults] = useState()
+  const [error, setError] = useState()
 
   const calculate = async (arcUtilityStatementId) => {
-    setOpenModal(true)
-    const result = await calculateCounterfactualBill(arcUtilityStatementId)
-    setCounterFactualResults(result)
+    try {
+      setOpenModal(true)
+      const result = await calculateCounterfactualBill(arcUtilityStatementId)
+      setCounterFactualResults(result)
+    } catch (error) {
+      setError(error.response)
+    }
   }
 
   const closeModal = () => {
     setOpenModal(false)
+    setError(null)
   }
 
   return (
@@ -49,7 +55,8 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
               <CounterfactualResults title="Current Cost" results={counterFactualResults.currentCost}></CounterfactualResults>
               <CounterfactualResults title="Current Cost Without Solar" results={counterFactualResults.currentCostWithoutSolar}></CounterfactualResults>
             </div>
-              : <p>Loading...</p>
+              : error ? <JSONPretty data={error} stringStyle="white-space: normal" style={{backgroundColor: '#FFCCCC'}}></JSONPretty>
+                : <p>Loading...</p>
           }
         </>
       </Modal>

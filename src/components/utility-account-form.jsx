@@ -19,7 +19,7 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
   useEffect(() => {
     setGenabilityAccount(null);
     setError(null);
-  }, [arcUtilityAccountId, setGenabilityAccount]);
+  }, [arcUtilityAccountId, setGenabilityAccount, setError]);
 
   return (
     <div>

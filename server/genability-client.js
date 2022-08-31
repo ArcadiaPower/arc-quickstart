@@ -59,7 +59,7 @@ export const createTariff = async (
   arcUtilityStatement
 ) => {
   if (!arcUtilityStatement.tariff) {
-    throw "This Utility Statement does not have a known tariff!";
+    throw new Error("This Utility Statement does not have a known tariff!")
   }
 
   // The following will transform the tariff into the correct form for Genability e.g. gen_mtid_522 => 522
