@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { calculateCounterfactualBill } from "../session.js";
+import CounterfactualResults from './counterfactual-results.jsx';
 import { object } from 'prop-types';
 import Modal from 'react-modal';
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
+const containerStyle = {
+  display: "flex",
+  gap: '20px',
+}
+
+const titleStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: 'center'
+}
 
 Modal.setAppElement(document.getElementById('root'));
 
@@ -37,15 +38,20 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
       <button onClick={() => calculate(arcUtilityStatement.id)}>
         Calculate Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}
       </button>
-      <Modal isOpen={openModal} style={customStyles} appElement={document.getElementById('app')}>
-        <p> We will display the results here if the exist and present loading if they are loading</p>
-        {counterFactualResults &&
-          <>
-            <p>Current Total Cost: {counterFactualResults.currentCost.totalCost}</p>
-            <p>Total Cost w/o Solar: {counterFactualResults.currentCostWithoutSolar.totalCost}</p>
-          </>
-        }
-        <button onClick={closeModal}>close</button>
+      <Modal isOpen={openModal} appElement={document.getElementById('app')}>
+        <div style={titleStyle}>
+          <h3>Counterfactual Bill for Arc Utility Statement {arcUtilityStatement.id}</h3>
+          <button onClick={closeModal}>close</button>
+        </div>
+        <>
+          {
+            counterFactualResults ? <div style={containerStyle}>
+              <CounterfactualResults title="Current Cost" results={counterFactualResults.currentCost}></CounterfactualResults>
+              <CounterfactualResults title="Current Cost Without Solar" results={counterFactualResults.currentCostWithoutSolar}></CounterfactualResults>
+            </div>
+              : <p>Loading...</p>
+          }
+        </>
       </Modal>
     </div>
   )
