@@ -1,3 +1,7 @@
 button {
   height: 25px;
 }
+
+.errorMessage {
+  background-color: #FFCCCC;
+}

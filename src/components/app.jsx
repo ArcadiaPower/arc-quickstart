@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import UtilityAccountForm from "./utility-account-form.jsx";
 import UtilityStatementsDisplay from "./utility-statements-display.jsx";
-import JSONPretty from 'react-json-pretty';
+import ErrorMessage from './error-message.jsx';
 
 const App = () => {
   const [arcUtilityAccountId, setArcUtilityAccountId] = useState('');
@@ -23,7 +23,7 @@ const App = () => {
       }
       {
         error &&
-          <JSONPretty data={error} stringStyle="white-space: normal" style={{backgroundColor: '#FFCCCC'}}></JSONPretty>
+          <ErrorMessage error={error}/>
       }
     </div>
   )

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { calculateCounterfactualBill } from "../session.js";
 import CounterfactualResults from './counterfactual-results.jsx';
+import ErrorMessage from './error-message.jsx';
 import { object } from 'prop-types';
 import Modal from 'react-modal';
 
@@ -55,7 +56,7 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
               <CounterfactualResults title="Current Cost" results={counterFactualResults.currentCost}></CounterfactualResults>
               <CounterfactualResults title="Current Cost Without Solar" results={counterFactualResults.currentCostWithoutSolar}></CounterfactualResults>
             </div>
-              : error ? <JSONPretty data={error} stringStyle="white-space: normal" style={{backgroundColor: '#FFCCCC'}}></JSONPretty>
+              : error ? <ErrorMessage error={error}/>
                 : <p>Loading...</p>
           }
         </>
