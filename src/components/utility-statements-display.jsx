@@ -11,10 +11,8 @@ const UtilityStatementsDisplay = ({arcUtilityAccountId, setError, error}) => {
       const result = await fetchUtilityStatements(arcUtilityAccountId);
       setArcUtilityStatements(result)
     } catch (error) {
-      console.log(error);
       setError(error.response)
     }
-
   };
 
   // Clear the current Utility Statements if the user re-enters a arcUtilityAccountId

@@ -41,8 +41,8 @@ app.post("/create_genability_account", async (req, res) => {
     res.json({ genabilityAccount });
     res.status(200);
   } catch (error) {
-    if (error.response) {
-      res.status(error.response.status).send(error.response.data);
+    if (error.response || error.message) {
+      res.status(error.response?.status || 500).send(error.response?.data || error.message)
     } else {
       res.sendStatus(500);
     }
@@ -60,7 +60,7 @@ app.get("/fetch_utility_statements", async (req, res) => {
   } catch (error) {
     if (error.response) {
       console.log(error)
-      res.status(error.response.status).send(error.response.data);
+      res.status(error.response.status).send(error.response.data.error);
     } else {
       res.sendStatus(500);
     }
@@ -96,14 +96,9 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     });
     res.status(200);
   } catch (error) {
-    if (error.response) {
-      console.log(error)
-      res.status(error.response.status).send(error.response.data);
-    } else if (error.message) {
-      console.log(error);
-      res.status(500).send(error.message)
-    }
-    else {
+    if (error.response || error.message) {
+      res.status(error.response?.status || 500).send(error.response?.data || error.message)
+    } else {
       res.sendStatus(500);
     }
   }

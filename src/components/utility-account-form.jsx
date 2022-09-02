@@ -10,7 +10,6 @@ const UtilityAccountForm = ({arcUtilityAccountId, setArcUtilityAccountId, genabi
       const result = await createGenabilityAccount(arcUtilityAccountId);
       setGenabilityAccount(result)
     } catch (error) {
-      console.log(error)
       setError(error.response)
     }
   };

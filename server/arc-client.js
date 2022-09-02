@@ -31,15 +31,22 @@ const setArcHeaders = (token) => ({
 
 export const getUtilityAccount = async (utilityAccountId) => {
   const accessToken = await getArcAccessToken();
+  try {
+    const response = await arcadiaApi.get(
+      `/utility_accounts/${utilityAccountId}`,
+      {
+        headers: setArcHeaders(accessToken),
+      }
+    );
 
-  const response = await arcadiaApi.get(
-    `/utility_accounts/${utilityAccountId}`,
-    {
-      headers: setArcHeaders(accessToken),
+    return response.data;
+  } catch (error) {
+    if (error.response.status === 403) {
+      throw new Error("Could not find this utility account, or utility account does not belong to your tenant in this environment")
+    } else {
+      return error;
     }
-  );
-
-  return response.data;
+  }
 };
 
 export const getUtilityStatements = async (utilityAccountId) => {

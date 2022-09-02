@@ -92,6 +92,7 @@ export const createUsageProfileIntervalData = async (
   );
 
   const intervalInfoData = intervalData.map((interval) => {
+    // will need to update to use interval.net_kwh when data is available
     return {
       fromDateTime: interval.startTime,
       toDateTime: interval.endTime,
