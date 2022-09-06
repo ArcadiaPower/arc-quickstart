@@ -2,6 +2,7 @@ import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { calculateCounterfactualBill } from "../session.js";
 import CounterfactualResults from './counterfactual-results.jsx';
+import ErrorMessage from './error-message.jsx';
 import { object } from 'prop-types';
 import Modal from 'react-modal';
 
@@ -21,15 +22,21 @@ Modal.setAppElement(document.getElementById('root'));
 const UtilityStatementElement = ({ arcUtilityStatement }) => {
   const [openModal, setOpenModal] = useState(false)
   const [counterFactualResults, setCounterFactualResults] = useState()
+  const [error, setError] = useState()
 
   const calculate = async (arcUtilityStatementId) => {
-    setOpenModal(true)
-    const result = await calculateCounterfactualBill(arcUtilityStatementId)
-    setCounterFactualResults(result)
+    try {
+      setOpenModal(true)
+      const result = await calculateCounterfactualBill(arcUtilityStatementId)
+      setCounterFactualResults(result)
+    } catch (error) {
+      setError(error.response)
+    }
   }
 
   const closeModal = () => {
     setOpenModal(false)
+    setError(null)
   }
 
   return (
@@ -49,7 +56,8 @@ const UtilityStatementElement = ({ arcUtilityStatement }) => {
               <CounterfactualResults title="Current Cost" results={counterFactualResults.currentCost}></CounterfactualResults>
               <CounterfactualResults title="Current Cost Without Solar" results={counterFactualResults.currentCostWithoutSolar}></CounterfactualResults>
             </div>
-              : <p>Loading...</p>
+              : error ? <ErrorMessage error={error}/>
+                : <p>Loading...</p>
           }
         </>
       </Modal>

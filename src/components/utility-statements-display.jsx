@@ -3,18 +3,23 @@ import { fetchUtilityStatements } from "../session.js";
 import UtilityStatementElement from "./utility-statement-element.jsx";
 import { string } from 'prop-types';
 
-const UtilityStatementsDisplay = ({arcUtilityAccountId}) => {
+const UtilityStatementsDisplay = ({arcUtilityAccountId, setError, error}) => {
   const [arcUtilityStatements, setArcUtilityStatements] = useState()
 
   const setUtilityStatements = async () => {
-    const result = await fetchUtilityStatements(arcUtilityAccountId);
-    setArcUtilityStatements(result)
+    try{
+      const result = await fetchUtilityStatements(arcUtilityAccountId);
+      setArcUtilityStatements(result)
+    } catch (error) {
+      setError(error.response)
+    }
   };
 
   // Clear the current Utility Statements if the user re-enters a arcUtilityAccountId
   useEffect(() => {
     setArcUtilityStatements(null)
-  }, [arcUtilityAccountId]);
+    setError(null)
+  }, [arcUtilityAccountId, setError]);
 
   return (
     <div>

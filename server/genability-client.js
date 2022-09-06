@@ -59,7 +59,7 @@ export const createTariff = async (
   arcUtilityStatement
 ) => {
   if (!arcUtilityStatement.tariff) {
-    throw "This Utility Statement does not have a known tariff!";
+    throw new Error("This Utility Statement does not have a known tariff!")
   }
 
   // The following will transform the tariff into the correct form for Genability e.g. gen_mtid_522 => 522
@@ -92,6 +92,7 @@ export const createUsageProfileIntervalData = async (
   );
 
   const intervalInfoData = intervalData.map((interval) => {
+    // will need to update to use interval.net_kwh when data is available
     return {
       fromDateTime: interval.startTime,
       toDateTime: interval.endTime,

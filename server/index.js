@@ -28,10 +28,18 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+const errorHandler = (error, request, response, next) => {
+  if (error.response || error.message) {
+    response.status(error.response?.status || 500).send(error.response?.data.error || error.message)
+  } else {
+    response.sendStatus(500);
+  }
+}
+
 // In this contrived example, use this global var to keep track of the genabilityAccountId
 let genabilityAccountId = null;
 
-app.post("/create_genability_account", async (req, res) => {
+app.post("/create_genability_account", async (req, res, next) => {
   const { utilityAccountId } = req.body;
   try {
     const arcUtilityAccount = await getUtilityAccount(utilityAccountId);
@@ -41,11 +49,11 @@ app.post("/create_genability_account", async (req, res) => {
     res.json({ genabilityAccount });
     res.status(200);
   } catch (error) {
-    console.log(error);
+      next(error)
   }
 });
 
-app.get("/fetch_utility_statements", async (req, res) => {
+app.get("/fetch_utility_statements", async (req, res, next) => {
   const { utilityAccountId } = req.query;
 
   try {
@@ -54,11 +62,11 @@ app.get("/fetch_utility_statements", async (req, res) => {
     res.json({ utilityStatements: arcUtilityStatements });
     res.status(200);
   } catch (error) {
-    console.log(error);
+    next(error)
   }
 });
 
-app.post("/calculate_counterfactual_bill", async (req, res) => {
+app.post("/calculate_counterfactual_bill", async (req, res, next) => {
   const { utilityStatementId } = req.body;
 
   try {
@@ -87,8 +95,7 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
     });
     res.status(200);
   } catch (error) {
-    console.log("oh no we encountered an error!", error); // TODO: parse HTTP errors if they exists error.response.data.error
-    console.log('error parsed', error.response.data)
+    next(error)
   }
 });
 
@@ -96,3 +103,5 @@ app.post("/calculate_counterfactual_bill", async (req, res) => {
 app.listen(port, () => {
   console.log(`Backend server running on port ${port}`);
 });
+
+app.use(errorHandler)
