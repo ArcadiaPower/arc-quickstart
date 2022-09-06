@@ -41,10 +41,10 @@ export const getUtilityAccount = async (utilityAccountId) => {
     return response.data;
   } catch (error) {
     if (error.response.status === 403 || error.response.status === 404) {
-      throw new Error("Could not find this utility account, or utility account does not belong to your tenant in this environment")
-    } else {
-      throw error;
+      error.response.data.error = "Could not find this utility account, or utility account does not belong to your tenant in this environment"
+      error.response.status = 400
     }
+    throw error;
   }
 };
 
