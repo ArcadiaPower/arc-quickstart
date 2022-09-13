@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useConnect } from '@arcadia-eng/connect-react';
-import { getConnectToken, deleteUser } from './session';
+import React, { useEffect, useState } from "react";
+import { useConnect } from "@arcadia-eng/connect-react";
+import { getConnectToken, deleteUser } from "./session";
 
 const ConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [config, setConfig] = useState(null);
   const [successful, setSuccessful] = useState(false);
   const [error, setError] = useState(null);
-  const [timedOut,  setTimedOut] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const [utilityCredentialId, setUtilityCredentialId] = useState(null);
 
   // This is the hook for the Connect Component
@@ -20,7 +20,7 @@ const ConnectWidget = () => {
   // The first time this Component renders, we ask the server to fetch a Connect Token from the Arcadia API
   useEffect(() => {
     getConnectToken()
-      .then(connectToken => {
+      .then((connectToken) => {
         // We configure the Component using the Connect Token
         setConfig(generateConfig(connectToken));
       })
@@ -31,16 +31,20 @@ const ConnectWidget = () => {
 
   const deleteUserAndReload = () => {
     deleteUser(() => window.location.reload(false));
-  }
+  };
 
   const renderConnectBtn = (
-      // When the button is clicked, we call Connect's open method in order to display the modal
-      <button type="button" disabled={loading || !config} onClick={() => open(config)}>
-        Launch Connect
-      </button>
+    // When the button is clicked, we call Connect's open method in order to display the modal
+    <button
+      type="button"
+      disabled={loading || !config}
+      onClick={() => open(config)}
+    >
+      Launch Connect
+    </button>
   );
 
-  const generateConfig = connectToken => {
+  const generateConfig = (connectToken) => {
     return {
       connectToken,
       callbacks: {
@@ -67,14 +71,17 @@ const ConnectWidget = () => {
               break;
             default:
               break;
-          };
+          }
 
           setModalOpen(false);
         },
         // Called if there was a catastrophic error when submitting the user's credential
         onError: ({ error }) => {
           let errorMessage = error?.response?.data?.error ?? error.message;
-          errorMessage = typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage)
+          errorMessage =
+            typeof errorMessage === "string"
+              ? errorMessage
+              : JSON.stringify(errorMessage);
           setError(errorMessage);
         },
       },
@@ -85,32 +92,53 @@ const ConnectWidget = () => {
 
   if (error) {
     return (
-        <div>
-          <p>Uh oh! We hit a problem: {error} </p>
-          {renderConnectBtn}
-        </div>
-    )
+      <div>
+        <p>Uh oh! We hit a problem: {error} </p>
+        {renderConnectBtn}
+      </div>
+    );
   }
 
   if (timedOut) {
-    return <p>Utility Credential #{utilityCredentialId} was created but the credentials weren't verified before the Component timed out and closed. The credentials will be verified in the background. If you've configured a webhook, check your console for incoming webhooks about verification.</p>
+    return (
+      <div>
+        <p>
+          Utility Credential #{utilityCredentialId} was created but the
+          credentials weren't verified before the Component timed out and
+          closed. The credentials will be verified in the background. If you've
+          configured a webhook, check your console for incoming webhooks about
+          verification.
+        </p>
+        <p>
+          In order to retry connecting these same credentials, you must delete
+          the user associated with the credentials first:
+        </p>
+        <button type="button" onClick={() => deleteUserAndReload()}>
+          Delete User and Reload
+        </button>
+      </div>
+    );
   }
 
   if (successful) {
     return (
       <div>
-        <p>You have connected Utility Credential #{utilityCredentialId}! If you've configured a webhook, check your console for incoming data.</p>
-        <p>In order to try connecting these same credentials, you must delete the user associated with the credentials first:</p>
+        <p>
+          You have connected Utility Credential #{utilityCredentialId}! If
+          you've configured a webhook, check your console for incoming data.
+        </p>
+        <p>
+          In order to try connecting these same credentials, you must delete the
+          user associated with the credentials first:
+        </p>
         <button type="button" onClick={() => deleteUserAndReload()}>
           Delete User and Reload
         </button>
       </div>
-    )
+    );
   }
 
-  return (
-    renderConnectBtn
-  );
+  return renderConnectBtn;
 };
 
 export default ConnectWidget;
