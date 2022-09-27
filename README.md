@@ -1,4 +1,4 @@
-This project demonstrates how to use Arcadia's [connect-react](https://github.com/ArcadiaPower/connect-react/) component in an example integration against the [Arc Platform API](http://developers.arcadia.com).
+This project demonstrates how to use Arcadia's [connect-react](https://github.com/ArcadiaPower/connect-react/) component in an example integration against the [Arc Platform API](https://docs.arcadia.com/reference/overview).
 
 # Arcadia's Arc Quickstart
 
@@ -65,7 +65,7 @@ What's next after a user enters their credentials through Connect? You likely wa
 
 ## 3. Use ngrok to create a public HTTPS endpoint
 
-Rather than constantly polling the Arc server, setting up webhook endpoints allows us to receive data through Arc webhooks as that data becomes available. When using Connect in your production environment, the webhook endpoint URLs you will register are your API endpoints at which you want to receive webhook data from Arc.
+Rather than constantly polling the Arc server, setting up webhook endpoints allows us to receive data through Arc webhooks as that data becomes available. When using Connect in your production environment, the webhook endpoint URLs you will register are your API endpoints at which you want to receive webhook data from Arc. The [webhook section](https://docs.arcadia.com/reference/webhooks) describes the RESTful Arcadia API endpoints for managing your webhook URIs.
 
 For the sake of Quickstart, let's set up a webhook endpoint so we can start receiving utility account data for a user that went through the Connect flow. In order to receive webhooks, we have to enable public HTTP requests to be received by our private, local development server. Our project is not publicly accessible to the internet because our server is running locally at `localhost:3010`. However, we can use a tool like [ngrok](https://ngrok.com/) to get a public HTTP endpoint for our local server.
 
@@ -99,7 +99,7 @@ Your registered webhook endpoint is only valid as long as your ngrok session is 
 
 ## 5. Test your webhook endpoint
 
-Now that we've registered our webhook URI, let's fire the [Test Webhook Event](https://developers.arcadia.com/#operation/requestWebookTestEvent) to make sure everything is wired up.
+Now that we've registered our webhook URI, let's fire the [Test Webhook Event](https://docs.arcadia.com/reference/test) to make sure everything is wired up.
 
 Re-start your server from the beginning of the walkthrough:
 
@@ -131,15 +131,15 @@ Great, we're all set up to start receiving webhook data!
 
 Open up your browser to the React app at [http://localhost:8090](http://localhost:8090). Refresh the page if you already went through the Connect flow in order to reset the example app.
 
-Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://developers.arcadia.com/#section/Authentication/Utility-Connect) with a username of `ARC_TEST_R_SINGLE_ELEC ` and a password of `verified` or you can use utility credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
+Go through the Connect flow. You can submit [Arcadia-defined test credentials](https://docs.arcadia.com/reference/testing#a-nametest-credentialsa-test-utility-credentials) with a username of `ARC_TEST_R_SINGLE_ELEC ` and a password of `verified` or you can use utility credentials associated with a real utility account. After you submit utility credentials, return to your console and watch the stream of webhook events roll in.
 
-You should see a [`utility_credential_verified`](https://developers.arcadia.com/#operation/utilityCredentialVerified) webhook event fired within seconds of submitting utility credentials. This webhook contains information about the submitted [UtilityCredential](https://developers.arcadia.com/#tag/UtilityCredential). A [`utility_accounts_discovered`](https://developers.arcadia.com/#operation/utilityAccountsDiscovered) webhook event should be fired shortly after. This webhook includes all the user's utility account data. Finally, after a minute or two, you'll receive a`historical_utility_statements_discovered` webhook for each utility account discovered. Theese webhooks will contain information on existing utility statements for an account.
+You should see a [`utility_credential_verified`](https://docs.arcadia.com/reference/utility-credential-verified) webhook event fired within seconds of submitting utility credentials. This webhook contains information about the submitted [UtilityCredential](https://docs.arcadia.com/reference/utility-credential-verified#utilitycredential). A [`utility_accounts_discovered`](https://docs.arcadia.com/reference/historical-utility-statements-discovered) webhook event should be fired shortly after. This webhook includes all the user's utility account data. Finally, after a minute or two, you'll receive a`historical_utility_statements_discovered` webhook for each utility account discovered. Theese webhooks will contain information on existing utility statements for an account.
 
-Note: In order to resubmit the same utility credentials again, you'll need to delete any users associated with the utility credentials. For convenience, the front-end for this demo provides a button to delete a user after connection, However, you can always delete the user manually using the [delete user endpoint](https://developers.arcadia.com/#operation/deleteUser).
+Note: In order to resubmit the same utility credentials again, you'll need to delete any users associated with the utility credentials. For convenience, the front-end for this demo provides a button to delete a user after connection, However, you can always delete the user manually using the [delete user endpoint](https://docs.arcadia.com/reference/deleteuser).
 
 ## Digging Deeper
 
-That concludes the basic Arc Quickstart! Explore our [API documentation](https://developers.arcadia.com/) for more Arc capabilities. Checkout [connect-react](https://github.com/ArcadiaPower/connect-react/) for instructions on how to embed Connect into your own application.
+That concludes the basic Arc Quickstart! Explore our [API documentation](https://docs.arcadia.com/reference/overview) for more Arc capabilities. Checkout [connect-react](https://github.com/ArcadiaPower/connect-react/) for instructions on how to embed Connect into your own application.
 
 There are two primary source code files that do most of the heavy lifting in this example application. Explore these files to get a deeper understanding of how to incorporate Connect and webhooks into your project:
 
