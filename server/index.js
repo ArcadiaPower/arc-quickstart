@@ -1,20 +1,21 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { validateWebhookSignature, getConnectDetails, deleteUser } from './utils.js';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import {
+  validateWebhookSignature,
+  getConnectDetails,
+  deleteUser,
+} from "./utils.js";
 dotenv.config();
-
-const { PORT } = process.env;
-
 
 const port = 3010;
 const app = express();
-app.use(express.text({type: '*/*'}));
+app.use(express.text({ type: "*/*" }));
 
 // Allow the browser to send/receive cookies from the Connect Component in development mode
 const corsOptions = {
   credentials: true,
-  origin: ['http://localhost:8090'],
+  origin: ["http://localhost:8090"],
 };
 app.use(cors(corsOptions));
 
@@ -22,7 +23,7 @@ app.use(cors(corsOptions));
 let currentClientUserId = null;
 
 // This is the endpoint used by Connect (in connect-widget.jsx) to request a Connect Token
-app.post('/connect_token', async (req, res) => {
+app.post("/connect_token", async (req, res) => {
   try {
     // Create an artificial, unique client_user_id and request a Connect Token
     const connectDetails = await getConnectDetails();
@@ -41,7 +42,7 @@ app.post('/connect_token', async (req, res) => {
   }
 });
 
-app.post('/delete_user', async (req, res) => {
+app.post("/delete_user", async (req, res) => {
   try {
     await deleteUser(currentClientUserId);
     currentClientUserId = null;
@@ -53,10 +54,10 @@ app.post('/delete_user', async (req, res) => {
 });
 
 // This is the endpoint that webhooks are delivered to
-app.post('/webhook_listener', (req, res) => {
+app.post("/webhook_listener", (req, res) => {
   validateWebhookSignature(req);
 
-  console.log('Received a webhook with data:');
+  console.log("Received a webhook with data:");
   console.dir(JSON.parse(req.body), { depth: null });
   res.sendStatus(200);
 });
