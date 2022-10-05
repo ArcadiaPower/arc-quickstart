@@ -99,7 +99,7 @@ Your registered webhook endpoint is only valid as long as your ngrok session is 
 
 ## 5. Test your webhook endpoint
 
-Now that we've registered our webhook URI, let's fire the [Test Webhook Event](https://docs.arcadia.com/reference/test) to make sure everything is wired up.
+Now that we've registered our webhook URI, let's fire the [Test Webhook Event](https://docs.arcadia.com/reference/requestwebooktestevent) to make sure everything is wired up.
 
 Re-start your server from the beginning of the walkthrough:
 
