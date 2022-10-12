@@ -18,5 +18,6 @@ export const StyledButton = styled.button`
   font-family: "DM Sans", sans-serif;
   font-weight: bold;
   font-size: 16px;
+  margin-top: 16px;
   cursor: pointer;
 `;
