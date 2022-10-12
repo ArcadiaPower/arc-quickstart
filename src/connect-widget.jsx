@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useConnect } from "@arcadia-eng/connect-react";
 import { getConnectToken, deleteUser } from "./session";
+import { ContentContainer, StyledButton } from "./styles";
 
 const ConnectWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,6 +13,10 @@ const ConnectWidget = () => {
 
   // This is the hook for the Connect Component
   const [{ loading, connectSetupError }, open] = useConnect();
+
+  const deleteUserAndReload = async () => {
+    await deleteUser(() => window.location.reload(false));
+  };
 
   if (connectSetupError) {
     setError(connectSetupError.message);
@@ -28,21 +33,6 @@ const ConnectWidget = () => {
         setError(e.message);
       });
   }, []);
-
-  const deleteUserAndReload = () => {
-    deleteUser(() => window.location.reload(false));
-  };
-
-  const renderConnectBtn = (
-    // When the button is clicked, we call Connect's open method in order to display the modal
-    <button
-      type="button"
-      disabled={loading || !config}
-      onClick={() => open(config)}
-    >
-      Launch Connect
-    </button>
-  );
 
   const generateConfig = (connectToken) => {
     return {
@@ -88,57 +78,61 @@ const ConnectWidget = () => {
     };
   };
 
-  if (modalOpen) return null;
+  return modalOpen && !loading ? null : (
+    <ContentContainer>
+      <h1>Arc Quickstart</h1>
 
-  if (error) {
-    return (
-      <div>
-        <p>Uh oh! We hit a problem: {error} </p>
-        {renderConnectBtn}
-      </div>
-    );
-  }
+      {successful && (
+        <>
+          <p>
+            You have connected Utility Credential #{utilityCredentialId}! If
+            you've configured a webhook, check your console for incoming data.
+          </p>
+          <p>
+            In order to try connecting these same credentials, you must delete
+            the user associated with the credentials first:
+          </p>
+        </>
+      )}
 
-  if (timedOut) {
-    return (
-      <div>
-        <p>
-          Utility Credential #{utilityCredentialId} was created but the
-          credentials weren't verified before the Component timed out and
-          closed. The credentials will be verified in the background. If you've
-          configured a webhook, check your console for incoming webhooks about
-          verification.
-        </p>
-        <p>
-          In order to retry connecting these same credentials, you must delete
-          the user associated with the credentials first:
-        </p>
-        <button type="button" onClick={() => deleteUserAndReload()}>
+      {timedOut && (
+        <>
+          <p>
+            Utility Credential #{utilityCredentialId} was created but the
+            credentials weren't verified before the Component timed out and
+            closed. The credentials will be verified in the background. If
+            you've configured a webhook, check your console for incoming
+            webhooks about verification.
+          </p>
+          <p>
+            In order to retry connecting these same credentials, you must delete
+            the user associated with the credentials first:
+          </p>
+        </>
+      )}
+
+      {error && <p>Uh oh! We hit a problem: {error} </p>}
+
+      {successful || timedOut ? (
+        <StyledButton type="button" onClick={() => deleteUserAndReload()}>
           Delete User and Reload
-        </button>
-      </div>
-    );
-  }
+        </StyledButton>
+      ) : (
+        <StyledButton
+          type="button"
+          disabled={loading || !config}
+          onClick={() => {
+            setModalOpen(true);
+            open(config);
+          }}
+        >
+          Launch Connect
+        </StyledButton>
+      )}
 
-  if (successful) {
-    return (
-      <div>
-        <p>
-          You have connected Utility Credential #{utilityCredentialId}! If
-          you've configured a webhook, check your console for incoming data.
-        </p>
-        <p>
-          In order to try connecting these same credentials, you must delete the
-          user associated with the credentials first:
-        </p>
-        <button type="button" onClick={() => deleteUserAndReload()}>
-          Delete User and Reload
-        </button>
-      </div>
-    );
-  }
-
-  return renderConnectBtn;
+      {loading && <p>Loading...</p>}
+    </ContentContainer>
+  );
 };
 
 export default ConnectWidget;
