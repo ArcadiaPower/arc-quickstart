@@ -27,7 +27,7 @@ const getAccessToken = async () => {
 const setHeaders = (token) => ({
   Authorization: `Bearer ${token}`,
   "Content-Type": "application/json",
-  "Arc-Version": "2021-11-17",
+  "Arc-Version": "2022-10-13",
 });
 
 export const getConnectDetails = async () => {
