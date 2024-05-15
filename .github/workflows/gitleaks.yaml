@@ -10,7 +10,7 @@ permissions:
 jobs:
   scan:
     name: gitleaks
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, runner-main]
     steps:
       - uses: actions/checkout@v4
         with:
