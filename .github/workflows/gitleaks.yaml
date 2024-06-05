@@ -1,4 +1,4 @@
-name: gitleaks
+name: GitLeaks
 on:
   pull_request:
   push:
@@ -10,22 +10,5 @@ permissions:
 jobs:
   scan:
     name: gitleaks
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        id: scan
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-      - uses: slackapi/slack-github-action@v1.26.0
-        if: steps.scan.outcome == 'failure'
-        with:
-          channel-id: ${{ secrets.GITLEAKS_CHANNEL_ID }}
-          slack-message: "Secret(s) detected: ${{ github.event_name == 'pull_request' && github.event.pull_request.html_url || github.event.compare }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SECURITY_NOTIFIER_SLACK_BOT_TOKEN }}
+    uses: ArcadiaPower/gitleaks-workflow/.github/workflows/gitleaks.yaml@5ae02b51d3614e5227a7d618e9e9d457cadae74a
+    secrets: inherit
